@@ -1,0 +1,108 @@
+﻿@model KorpaIndexVM
+<style>
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+
+    .img-product {
+        padding: .25rem;
+        background-color: #fff;
+        border-radius: .25rem;
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+    }
+</style>
+<div class="container mt-md-5" id="korpaDiv">   
+    <div class="row">
+        <div class="col-md-7">
+            @foreach (var item in Model.rows)
+            {
+                <div class="row mb-2">
+                    <div class="col-md-2">
+                        <img class="img-product" src="/uploads/products/@Html.Raw(item.Slika)" />
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row justify-content-between">
+                            <div class="col-md-4">
+                                <p class="p-md-0 mb-0">@item.NazivProizvoda</p>
+                                <p class="p-md-0 mb-0">@item.Cijena KM</p>
+                                <p class="p-md-0 mb-0">@item.Dimenzija</p>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" asp-for="@item.Kolicina" id="txtKolicina" class="form-control" onchange="promijeniKolicinu(@item.StavkaId,this)"/>
+                            </div>
+                            <div class="col-md-3">
+                                <a asp-action="UkloniProizvod" asp-controller="Korpa" asp-route-stavkaId ="@item.StavkaId" class="btn btn-warning btn-circle" style="cursor:pointer;">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+            }
+        </div>
+        <div class="col-md-4">
+            <h3>Detalji narudžbe</h3>
+            <hr class="mb-md-2" />
+            <div class="row">
+                <div class="col">
+                    <p>Ukupno</p>
+                </div>
+                <div class="col">
+                    <p>@Model.Ukupno KM</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>Troškovi dostave</p>
+                </div>
+                <div class="col">
+                    <p>@Model.TroskoviDostave</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>Ukupno za platiti</p>
+                </div>
+                <div class="col">
+                    <p>@Model.UkupnoZaPlatiti KM</p>
+                </div>
+            </div>
+            @if (Model.rows.Count > 0)
+            {
+                <a class="btn btn-outline-dark btn-block" style="letter-spacing: .1em;" asp-action="DodajInfo" asp-controller="Kupci">NARUČI</a>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-controller="Proizvodi" asp-action="Shop" class="btn btn-outline-info">Nastavi sa kupovinom</a>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">   
+    function promijeniKolicinu(proizvodId, kolicina) {
+        var kol = kolicina.value;
+            $.ajax({
+                url: "@Url.Action("PromijeniKolicinu", "Korpa")",
+                type: 'GET',
+                data: { stavkaId: proizvodId, kolicina: kol },
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                }              
+                
+            });
+    }
+</script>

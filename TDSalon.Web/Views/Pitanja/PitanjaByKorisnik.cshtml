@@ -1,0 +1,26 @@
+﻿@model PitanjaKorisnikVM
+@{
+    Layout = "~/Views/Shared/_KupciLayout.cshtml";
+}
+<div class="container mb-2">
+    <div class="row mb-2 mt-2 ml-1">
+        <div class="col">
+            <h2>Q&A</h2>
+        </div>
+    </div>
+    <div class="container">       
+        <div class="row">
+            @foreach (var item in Model.Rows)
+            {
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Pitanje?</h5>
+                        <p class="card-text pl-4">@item.Odgovor</p>
+                    </div>
+                </div>
+            </div>
+             }               
+         </div>
+    </div>
+</div>

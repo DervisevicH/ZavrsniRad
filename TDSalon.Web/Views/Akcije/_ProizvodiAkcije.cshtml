@@ -1,0 +1,33 @@
+﻿@model TDSalon.Web.Models.AkcijeUrediVM
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.11.1/css/all.css">
+
+
+    <table class="table table-bordered" id="listProizvodi">
+        <thead>
+            <tr>
+                <th scope="col">Šifra</th>
+                <th scope="col">Naziv</th>
+                <th scope="col">Cijena</th>
+                <th scope="col">Akcijska cijena</th>
+                <th scope="col">Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.AkcijeProizvodi)
+            {
+                <tr>
+                    <td>@item.Sifra</td>
+                    <td>@item.Naziv</td>
+                    <td>@item.Cijena</td>
+                    <td>@item.AkcijskaCijena</td>
+                    <td><a class="" onclick="UkloniProizvod(@item.AkcijaProizvodiId)"><i class="fas fa-trash-alt"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row justify-content-end mt-3">
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-outline-info btn-block">Sačuvaj</button>
+        </div>
+    </div>
+

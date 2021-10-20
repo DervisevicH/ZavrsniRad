@@ -1,0 +1,114 @@
+﻿@model TDSalon.Web.Models.NarudzbaDetaljiVM
+@{
+    ViewData["Title"] = "Uredi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="">
+    <h3>Broj narudžbe: @Model.BrojNarudzbe</h3>
+    @if (Model.Procesirana)
+    {
+        <span class="badge badge-pill badge-danger">Završena</span>
+    }
+    else
+    {
+        <span class="badge badge-pill badge-success">Aktivna</span>
+    }
+    <hr />
+    <div class="row justify-content-between">
+        <div class="col-md-7">
+            <table class="table mt-md-2">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Šifra</th>
+                        <th scope="col">Proizvod</th>
+                        <th scope="col">Dimenzija</th>
+                        <th scope="col">Količina</th>
+                        <th scope="col">Cijena</th>
+                        <th scope="col">Popust(%)</th>
+                        <th scope="col">Ukupno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.listaStavki)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@item.Sifra</td>
+                            <td>@item.Proizvod</td>
+                            <td>@item.Dimenzija</td>
+                            <td>@item.Kolicina</td>
+                            <td>@item.Cijena KM</td>
+                            <td>@item.Popust</td>
+                            <td>@item.Ukupno.ToString("0.00") KM</td>
+                        </tr>
+                    }
+                    <tr class="font-weight-bold">
+                        <td colspan="6"></td>
+                        <td>Međusuma</td>
+                        <td>@Model.Medusuma.ToString("0.00") KM</td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td colspan="6"></td>
+                        <td>Troškovi dostave</td>
+                        <td>@Model.TroskoviDostave.ToString("0.00") KM</td>
+                    </tr>
+                    <tr class="bg-light font-weight-bold">
+                        <td colspan="6"></td>
+                        <td>Ukupno</td>
+                        <td>@Model.UkupnoZaPlatit.ToString("0.00") KM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="column">
+                <h5>Info o kupcu</h5>
+                <hr class="mb-2" />
+                <div class="p-md-3" border-radius:10px;">
+                    <address>
+                        <strong>@Model.Kupac</strong><br>
+                        @Model.Adresa<br>                        
+                        @Model.Telefon
+                    </address>
+
+                    <strong>Napomena: </strong><br>
+                    <p class="p-md-2">@Model.Napomena</p>
+                </div>
+                <div class="font-weight-bold bg-light" style="border:1px solid white; border-radius:10px;">
+                    <h5>Status narudžbe</h5>
+                    <hr class="mb-2" />
+                    <form class="p-md-2" asp-controller="Narudzbe" asp-action="ProcesirajNarudzbu">
+                        <input hidden asp-for="@Model.NarudzbaId" />
+                        <div class="form-group row">
+                            <label for="Status" class="col-form-label col-md-4">Status</label>
+                            <div class="col-md-6">
+                                <select class="form-control" asp-for="@Model.Status">
+                                    <option value="Čekanje">Čekanje</option>
+                                    <option value="Odobreno">Odobreno</option>
+                                    <option value="Poslano">Poslano</option>
+                                    <option value="Isporučeno">Isporučeno</option>
+                                    <option value="Otkazano">Otkazano</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Komentar" class="col-form-label col-md-4">Komentar</label>
+                            <div class="col-md-6">
+                                <textarea class="form-control" rows="4" asp-for="@Model.Komentar"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-6"><button type="submit" class="btn btn-info btn-block">Sačuvaj</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

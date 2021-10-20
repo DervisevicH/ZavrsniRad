@@ -1,0 +1,58 @@
+﻿@model PitanjaIndexVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="container">
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-4">Pitanja za proizvode</legend>
+        <form asp-action="Index" method="get">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-4">
+                    <select class="form-control" asp-items="Model.ListaProizvoda" asp-for="ProizvodId" name="proizvodId">
+                        <option value="0">Odaberite proizvod...</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="isOdgovorena" asp-for="IsOdgovorena">
+                        <label class="form-check-label" for="autoSizingCheck2">
+                            Prikaži odgovorena pitanja
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-secondary" type="submit">
+                        Pretraži
+                    </button>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+
+    @foreach (var item in Model.ListaPitanja)
+    {
+        <div class="card mb-2">
+            <div class="card-header">
+                <div class="row justify-content-between pl-2 pr-2">
+                    <span>
+                        Proizvod: <a asp-action="Uredi" asp-controller="Proizvodi" asp-route-id=@item.ProizvodId class="text-info" style="text-decoration:underline">@item.ProizvodNaziv</a>
+                    </span>
+                    @if (@String.IsNullOrEmpty(item.Odgovor))
+                    {
+                        <a class="btn btn-sm btn-primary" asp-controller="Odgovori" asp-action="Dodaj" asp-route-pitanjeId="@item.PitanjeId">
+                            Odgovori
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@item.Pitanje</h5>
+                <p class="card-text text-left">@item.Odgovor</p>
+                <p class="text-right disabled small mt-2 font-italic">Pitanje postavio: @item.ImePrezime </p>
+                <p class="text-right disabled small font-italic">@item.Datum.ToString("dd-MM-yyyy") </p>
+            </div>
+        </div>
+    }
+</div>
+
+

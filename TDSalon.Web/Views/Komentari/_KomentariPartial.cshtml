@@ -1,0 +1,34 @@
+﻿@model KomentariVM
+
+<div class="container mt-3">
+    @foreach (var item in Model.rows)
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <div class="rating-stars">
+                    <span>
+                        @for (int ocjena = 0; ocjena < 5; ocjena++)
+                        {
+                            if (ocjena < item.Ocjena)
+                            {
+                                <i class="far fa-star" style="color:orange"></i>
+
+                            }
+                            else
+                            {
+                                <i class="far fa-star" style="color:darkgray"></i>
+                            }
+                        }
+                    </span>
+                </div>
+                <p>Korisnik: @item.Korisnik</p>
+                <p>@item.Datum</p>
+            </div>
+            <div class="col-md-9">
+                <p>@item.Naslov</p>
+                <p>@item.Komentar</p>
+            </div>
+        </div>
+        <hr />
+    }
+</div>

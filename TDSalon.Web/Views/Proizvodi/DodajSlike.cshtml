@@ -1,0 +1,61 @@
+﻿@model ProizvodiSlikeVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h3 class="text-dark text-capitalize">Novi proizvod</h3>
+<h6 class="text-dark text-capitalize">Slike proizvoda</h6>
+<hr />
+<div class="container">
+    <form asp-action="SacuvajProizvod" asp-controller="Proizvodi" enctype="multipart/form-data">
+        <div class="container mt-md-3 mb-md-4">
+            <div class="row justify-content-between align-items-end" style="border-bottom:1px solid #dee2e6;">
+                <h6 class="text-dark text-capitalize"><i class="fas fa-images"></i> Odabrane slike</h6>
+                <div class="form-group">
+                    <a class="btn text-white" style="background-color: #dc4666" onclick="$('#gallery-photo-add').click()">Odaberite sliku</a><br />
+                    <input type="file" multiple="multiple" id="gallery-photo-add" hidden asp-for=@Model.slike  />
+                    <span asp-validation-for="@Model.slike" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="gallery row mt-md-2 mb-md-2" id="selectedFiles">
+            </div>
+        </div>
+
+        <div class="row justify-content-between">
+            <div class="form-group col-md-3">
+                <a asp-controller="Proizvodi" asp-action="DodajCijene" class="btn btn-outline-dark btn-block"><i class="fal fa-arrow-left mr-2"></i>Prethodna</a>
+            </div>
+            <div class="form-group col-md-3">
+                <button class="btn btn-outline-info btn-block" type="submit">Sačuvaj</button>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        var files = $("#gallery-photo-add").val();
+        console.log(files);
+
+        // Multiple images preview in browser
+        var imagesPreview = function (input, placeToInsertImagePreview) {
+
+            if (input.files) {
+                var filesAmount = input.files.length;
+
+                for (i = 0; i < filesAmount; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        $($.parseHTML('<img>')).attr({ 'src': event.target.result, 'class': 'col-md-4 img ' }).appendTo(placeToInsertImagePreview);
+                    }
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+        };
+        $('#gallery-photo-add').on('change', function () {
+            imagesPreview(this, 'div.gallery');
+        });
+    });
+</script>

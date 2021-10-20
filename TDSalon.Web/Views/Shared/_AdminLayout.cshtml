@@ -1,0 +1,285 @@
+﻿@using TDSalon.Web.Helper
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>_AdminLayout</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/nav.css" />
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.11.1/css/all.css">
+    <style>
+        .admin-nav .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        #sidebar .admin-nav ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: coral !important;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid rgba(0,0,0,.1);
+            cursor: pointer;
+        }
+
+        
+
+        .sidenav {
+            height: 100%;
+            width: 300px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            padding-top: 20px;
+            border-right: 1px solid rgba(0,0,0,.1);
+        }
+
+        .nav-item a {
+            padding: 1.175rem 0.9375rem;
+        }
+
+        body {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+        }
+
+        .container-fluid {
+            padding-left: 0px !important;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+        }
+
+        .main {
+            margin-left: 300px; /* Same as the width of the sidenav */
+            padding: 0px 10px;
+        }
+
+        span.notification-badge {
+            position: relative;
+            top: -10px;
+            right: 10px;
+            border: $white 1px solid;
+        }
+    </style>
+</head>
+
+<body>
+    @*<div class="container-fluid w-100">
+            <div class="row gutter-1 gutter-md-2">
+                <div class="col-xl-3 col-lg-4 mb-5 ml-0 h-100 sidenav">
+                    <div class="card">
+                        <img src="#" alt="Alternate Text" height="200" class="card-img-top" />
+                    </div>
+                    <ul class="nav flex-column pt-2 mt-2">
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-home col-md-2"></i> <a class="nav-link disabled col-md-4" href="#">Početna</a>
+                        </li>
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-edit col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Proizvodi</a>
+                        </li>
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-receipt col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Narudžbe</a>
+                        </li>
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-users col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Zaposlenici</a>
+                        </li>
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-percent col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Akcije</a>
+                        </li>
+                        <li class="nav-item row align-items-center">
+                            <i class="fas fa-store col-md-2"></i><a class="nav-link disabled col-md-4" href="#" data-toggle="collapse" data-target="#service">Skladište</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-xl-8 mt-4 pl-2 main">
+                    @RenderBody()
+                </div>
+            </div>
+
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>*@
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header text-center">
+                <img src="/uploads/logo.png" alt="Alternate Text" />
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>Zaposlenik</p>
+                <li class="active">
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Narudžbe</a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a asp-action="Index" asp-controller="Narudzbe">Pretraži</a>
+                        </li>
+                        <li>
+                            <a href="#">Otkazane narudžbe</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 3</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Proizvodi</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li>
+                            <a asp-action="IndexAdmin" asp-controller="Proizvodi">Pregled</a>
+                        </li>
+                        <li>
+                            <a asp-action="DodajInfo" asp-controller="Proizvodi">Novi proizvod</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#suppliersSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Dobavljači</a>
+                    <ul class="collapse list-unstyled" id="suppliersSubmenu">
+                        <li>
+                            <a asp-action="Index" asp-controller="Dobavljaci">Pregled</a>
+                        </li>
+                        <li>
+                            <a asp-action="Dodaj" asp-controller="Dobavljaci">Novi dobavljač</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#actionsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Akcije</a>
+                    <ul class="collapse list-unstyled" id="actionsSubmenu">
+                        <li>
+                            <a asp-action="Index" asp-controller="Akcije">Pretraga</a>
+                        </li>
+                        <li>
+                            <a asp-action="DodajAkciju" asp-controller="Akcije">Nova akcija</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#qaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pitanja</a>
+                    <ul class="collapse list-unstyled" id="qaSubmenu">
+                        <li>
+                            <a asp-action="Index" asp-controller="Pitanja">Pretraga</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#newsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Obavijesti</a>
+                    <ul class="collapse list-unstyled" id="newsSubmenu">
+                        <li>
+                            <a asp-action="IndexAdmin" asp-controller="Obavijesti">Pretraga</a>
+                        </li>
+                        <li>
+                            <a asp-action="Dodaj" asp-controller="Obavijesti">Nova obavijest</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Magacin</a>
+                </li>
+                <li>
+                    <a asp-action="GetAllKupce" asp-controller="Kupci">Kupci</a>
+                </li>
+            </ul>
+
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                </li>
+                <li>
+                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn" style="background-color:coral;">
+                        <i class="fas fa-align-left"></i>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#" target="_blank" rel="noopener" aria-label="GitHub">
+                                    <i class="fa fa-lg fa-bell"></i>
+                                    <span class="notification-badge badge badge-danger">1</span>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown admin-nav" id="">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-lg fa-envelope notification-icon"></i>
+                                    <span class="notification-badge badge badge-danger" id="pitanjaSpan" hidden="hidden"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-default"
+                                     aria-labelledby="navbarDropdownMenuLink-333" id="pitanjaNotifikacije">
+                                </div>
+
+                            </li>
+                            <li class="nav-item dropdown admin-nav">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-user" style="font-size:1.5em;"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-default"
+                                     aria-labelledby="navbarDropdownMenuLink-333">
+                                    <a class="dropdown-item" asp-action="Profil" asp-controller="Zaposlenici"> <i class="far fa-address-card pr-3"></i>Profil</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-controller="Autentifikacija" asp-action="Logout"><i class="fas fa-sign-out-alt pr-3"></i>Odjavi se</a>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/js/notification.js"></script>
+    @*<script>
+        $(document).ready(function () {
+            console.log("helllo");
+            $.ajax({
+                url: "/Notifikacije/GetZaposlenikNotifikacije",
+                type: 'GET'                             
+            });
+        });
+    </script>*@
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

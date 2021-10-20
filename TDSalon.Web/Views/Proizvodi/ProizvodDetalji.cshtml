@@ -1,0 +1,210 @@
+﻿@model ProizvodDetaljiVM
+<style>
+    .text {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: .1em;
+    }
+
+    .proizvod-naziv {
+        margin-bottom: 0.5em;
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        line-height: 1.2;
+        color: #000;
+    }
+
+    .proizvod-cijena {
+        font-size: 1.125rem !important;
+        line-height: 1.4em;
+        margin-bottom: 0.5em;
+    }
+
+    .proizvod-detalji {
+        margin-bottom: 1.5em;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        var i = 0;
+                        @foreach (var item in Model.Slike)
+                        {
+                            var itemClass = i++ == 0 ? "active" : "";
+                            <div class="carousel-item @itemClass">
+                                <img src="/uploads/products/@Html.Raw(item)" class="d-block w-100 h-100" alt="Slika proizvoda" style="border-radius: 10px;">
+                            </div>
+                        }
+                    }
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <input type="hidden" id="proizvodDetaljiId" name="name" asp-for="ProizvodDetaljiId" />
+            <input type="hidden" id="proizvodId" name="name" asp-for="ProizvodId" />
+            <span class="text-muted mb-5 text">@Model.Kategorija</span>
+            <h1 class="proizvod-naziv">@Model.Naziv</h1>
+            <div id="cijenaDiv" class="proizvod-cijena">
+                <span>@Model.Cijena KM</span>
+            </div>
+            <div class="row proizvod-detalji">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Dimenzije</label>
+                        <select id="listaDimenzija" class="form-control form-control-sm" asp-items=@Model.ListaDimenzija asp-for="DimenzijaId"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Količina</label>
+                        <input type="number" id="txtKolicina" class="form-control form-control-sm" value="1" />
+                    </div>
+                </div>
+            </div>
+            <div class="row proizvod-detalji">
+                <div class="col-md-8">
+                    <button id="btnDodajUKorpu" class="btn btn-dark btn-block">Dodaj u korpu</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-danger" data-toggle="tooltip" title="" id="btnDodajUFavorite" data-original-title="Whishlist"><i class="fas fa-heart"></i></button>
+                </div>
+            </div>
+            <div class="alert alert-warning text-info small">
+                <i class="fas fa-question-circle"></i>
+                Imate pitanje? Kontaktirajte nas za pomoć.<a href="/Pitanja/DodajPitanje?proizvodID=@Model.ProizvodId"> Kliknite ovdje</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid pt-lg-3 mt-lg-3 mb-3">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" href="#description" data-toggle="tab" role="tab" aria-selected="false">Opis proizvoda</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reviews" data-toggle="tab" role="tab" aria-selected="true">Komentari (@Model.BrojKomentara)</a></li>
+        <li class="nav-item"><a class="nav-link " href="#comment" data-toggle="tab" role="tab" aria-selected="true" onclick="DodajKomentar()">Ostavi komentar</a></li>
+    </ul>
+    <div class="tab-content col-md-12">
+        <div class="tab-pane active show fade" id="description" role="tabpanel">
+            <table class="table table-bordered mt-3">
+                <tbody>
+                    <tr class="d-flex">
+                        <td class="col-md-3">Naziv</td>
+                        <td class="col-md-9">@Model.Naziv</td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-md-3">Opis</td>
+                        <td class="col-md-9">@Model.Opis</td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-md-3">Boja</td>
+                        <td class="col-md-9">@Model.Boja</td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-md-3">Preporučeno za</td>
+                        <td class="col-md-9">@Model.PreporucenoZa</td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-md-3">Zemlja porijekla</td>
+                        <td class="col-md-9">@Model.ZemljaPorijekla</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade col-md-12" id="reviews" role="tabpanel">-->
+             Komentari
+
+        </div>
+        <div class="tab-pane fade" id="comment" role="tabpanel">
+             Review
+
+
+        </div>
+    </div>
+
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        UcitajKomentare(@Model.ProizvodDetaljiId);
+
+        $("#btnDodajUKorpu").click(function () {
+            proizvodId = $("#proizvodId").val();
+            kolicina = $("#txtKolicina").val();
+            $.ajax({
+                url: "@Url.Action("DodajUKorpu", "Korpa")",
+                type: 'GET',
+                data: { proizvodId: proizvodId, kolicina: kolicina},
+                success: function () {
+
+                }
+            });
+
+        });
+
+        $("#btnDodajUFavorite").click(function () {
+            proizvodId = $("#proizvodId").val();
+            $.ajax({
+                url: "@Url.Action("Dodaj", "Favoriti")",
+                type: 'GET',
+                data: { proizvodId: proizvodId },
+                success: function () {
+                }
+            });
+
+        });
+        $("#listaDimenzija").change(function () {
+            dimenzijaId = $("#listaDimenzija").val();
+            proizvodDetaljiId = $("#proizvodDetaljiId").val();
+            console.log(dimenzijaId, proizvodDetaljiId);
+            $.ajax({
+                url: "@Url.Action("PromijeniCijenu", "Proizvodi")",
+                type: 'GET',
+                data: { dimenzijaId: dimenzijaId, proizvodDetaljiId: proizvodDetaljiId},
+                success: function (data) {
+                    $("#proizvodId").val(data.proizvodId);
+                    $("#cijenaDiv").empty()
+                    $('#cijenaDiv').append('<span>' + data.cijena + " KM" + '</span>');
+                }
+            });
+        });
+    });
+    function UcitajKomentare(id) {
+         $.ajax({
+    url: "@Url.Action("Index", "Komentari")",
+    type: 'GET',
+    data: {id:id},
+    datatype: 'json',
+    success: function (data) {
+    $('#reviews').html(data);
+    }
+    });
+    }
+    function DodajKomentar() {
+
+     $.ajax({
+       url: "@Url.Action("Dodaj", "Komentari")",
+            type: 'GET',
+            data: { proizvodId:@Model.ProizvodDetaljiId },
+         datatype: 'json',
+         success: function (data) {
+    $('#comment').html(data);
+         }
+
+    });
+    }
+</script>

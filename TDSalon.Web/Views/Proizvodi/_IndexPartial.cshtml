@@ -1,0 +1,35 @@
+﻿@model ProizvodiIndexVM
+@{
+    Layout = null;
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Šifra</th>
+            <th scope="col">Naziv proizvoda</th>
+            <th scope="col">Cijena</th>
+            <th scope="col">Količina</th>
+            <th scope="col">Kategorija</th>
+            <th scope="col">Opcije</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaProizvodi)
+        {
+            <tr>
+                <th>@item.Sifra</th>
+                <td>@item.Naziv</td>
+                <td>@item.Cijena KM</td>
+                <td>@item.Kolicina</td>
+                <td>@item.Kategorija</td>
+                <td>
+                    <a asp-action="Uredi" asp-controller="Proizvodi" asp-route-id="@item.ProizvodId"><i class="fas fa-edit" style="color:blue;" title="Izmijeni"></i></a> |
+                    <a class="fas fa-trash-alt" style="color:red;" title="Izbriši" data-toggle="modal" data-target="#myModal" onclick="promijeniId(@item.ProizvodId)"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

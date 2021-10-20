@@ -1,0 +1,23 @@
+﻿@model ProizvodiVM
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+@foreach (var item in Model.Rows)
+{
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-img-top">
+            <img src="/uploads/products/@Html.Raw(item.SlikaUrl)" class="w-100" />
+        </div>
+        <div class="card-body">
+            <a asp-controller="Proizvodi" asp-action="ProizvodDetalji" asp-route-proizvodId="@item.ProizvodId">
+                <h5 class="card-title">@item.Naziv</h5>
+            </a>
+            <p class="card-text">@item.Cijena KM</p>
+            <button onclick="DodajUKorpu(@item.ProizvodId)" class="btn text-white btn-block" style="background-color:coral;">Dodaj u korpu</button>
+        </div>
+    </div>
+</div>
+}

@@ -1,0 +1,56 @@
+﻿@model ProizvodiCijeneVM
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "DimenzijeProizvodaDodaj";
+    string greska_poruka = (string)TempData["greska_poruka"];
+
+}
+<div class="container">
+    <h3 class="text-dark text-capitalize">Novi proizvod</h3>
+    <h6 class="text-dark text-capitalize">Podaci o dimenzijama i cijenama</h6>
+    <hr />
+    <form asp-action="SacuvajCijene" asp-controller="Proizvodi">
+        <input type="hidden" asp-for="KategorijaId" value=@Model.KategorijaId />
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Dimenzija</th>
+                    <th scope="col">Šifra</th>
+                    <th scope="col">Cijena</th>
+                    <th scope="col">Količina</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.RowsDetalji.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" asp-for="@Model.RowsDetalji[i].DimenzijaId" />
+                            @*<input type="hidden" name="name" value="@Model.RowsDetalji[i].Dimenzija" asp-for="@Model.RowsDetalji[i].Dimenzija" />*@
+                            @Model.RowsDetalji[i].Dimenzija
+                        </td>
+                        <td><input type="text" class="form-control" asp-for="@Model.RowsDetalji[i].Sifra" /></td>
+                        <td><input type="number" class="form-control" asp-for="@Model.RowsDetalji[i].Cijena" /></td>
+                        <td><input type="number" class="form-control" asp-for="@Model.RowsDetalji[i].Stanje" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (greska_poruka != null)
+        {
+            <br />
+            <div class="alert alert-danger">
+                @greska_poruka
+            </div>
+        }
+        <div class="row justify-content-between">
+            <div class="form-group col-md-3">
+                <a asp-controller="Proizvodi" asp-action="DodajInfo" class="btn btn-outline-dark btn-block"><i class="fal fa-arrow-left mr-2"></i>Prethodna</a>
+            </div>
+            <div class="form-group col-md-3">
+                <button class="btn btn-outline-info btn-block" type="submit">Sljedeća<i class="fal fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+    </form>
+</div>

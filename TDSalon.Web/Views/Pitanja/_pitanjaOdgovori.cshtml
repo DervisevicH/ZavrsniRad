@@ -1,0 +1,15 @@
+﻿@model PitanjaKorisnikVM
+@{
+    Layout = null;
+}
+
+@foreach (var item in Model.Rows)
+{
+    
+<p>
+    @item.Pitanje
+</p>
+<p>
+    @item.Odgovor
+</p>
+}

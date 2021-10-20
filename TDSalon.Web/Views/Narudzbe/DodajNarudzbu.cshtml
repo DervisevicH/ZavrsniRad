@@ -1,0 +1,109 @@
+﻿@model NarudzbaDodajVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<style>
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+
+    .img-product {
+        padding: .25rem;
+        background-color: #fff;
+        border-radius: .25rem;
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+    }
+</style>
+<link rel="stylesheet" href="~/css/site.css" />
+<div class="container mt-md-4">
+    <h3 class="text-center  mb-md-2">Vaša narudžba</h3> 
+    <hr />
+    <div class="row justify-content-between mt-md-5">
+        <div class="col-md-6 mt-md-4">
+            @foreach (var item in Model.rows)
+            {
+                <div class="row mb-2">
+                    <div class="col-md-2">
+                        <img class="img-product" src="/uploads/products/@Html.Raw(item.Slika)" />
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row justify-content-between">
+                            <div class="col-md-4">
+                                <p class="p-md-0 mb-0">@item.NazivProizvoda</p>
+                                <p class="p-md-0 mb-0">@item.Dimenzija</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="p-md-0 mb-0 font-weight-bold">@item.Kolicina</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="p-md-0 mb-0 font-weight-bold text-right">@item.Cijena KM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+            }
+            <div class="row">
+                <div class="col">
+                    <p>Ukupno</p>
+                </div>
+                <div class="col">
+                    <p class="text-right">@Model.Ukupno KM</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>Troškovi dostave</p>
+                </div>
+                <div class="col">
+                    <p class="text-right">@Model.TroskoviDostave</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>Ukupno za platiti</p>
+                </div>
+                <div class="col">
+                    <p class="text-right">@Model.UkupnoZaPlatiti KM</p>
+                </div>
+            </div>
+            <hr />
+        </div>
+        <div class="col-md-4">
+            <form asp-action="SacuvajNarudzbu" asp-controller="Narudzbe" method="post">
+                <h6 class="text-dark text-capitalize">Detalji o isporuci</h6>
+                <hr />
+                <h5>@Model.Kupac.Ime @Model.Kupac.Prezime</h5>
+                <h5>@Model.Kupac.Telefon</h5>
+                <h5>@Model.Kupac.Adresa</h5>
+                <div class="form-group">
+                    <label asp-for=@Model.Napomena class="control-label mb-10">Napomena</label>
+                    <textarea class="form-control" type="text" rows="3" asp-for=@Model.Napomena>
+                </textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for=@Model.RokZaDostavu class="control-label mb-10">Rok za dostavu</label>
+                    <input class="form-control" type="number" asp-for=@Model.RokZaDostavu />
+                </div>
+
+                <button class="btn btn-outline-dark btn-block" type="submit" style="letter-spacing: .1em;">NARUČI</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+

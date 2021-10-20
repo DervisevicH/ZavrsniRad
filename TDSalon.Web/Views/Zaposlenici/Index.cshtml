@@ -1,0 +1,39 @@
+﻿@model Article
+@{
+    ViewData["Title"] = "Index";
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+</head>
+<body>
+    <h1>Index</h1>
+    @using (Html.BeginForm("Index", "Zaposlenici", FormMethod.Post, new { id = "Article" }))
+    {
+        <div class="row">
+            <div class="col-6">
+                Article Heading
+            </div>
+            <div class="col-6">
+                <input type="hidden" id="articleHeading" name="articleHeading" />
+                @Html.TextBoxFor(model => Model.articleHeading, new { @maxlength = "50" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                Article Content
+            </div>
+            <div class="col-6">
+                @Html.TextBoxFor(model => Model.articleContent, new { @maxlength = "100" })
+            </div>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    }
+</body>
+</html>
+

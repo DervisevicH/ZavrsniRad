@@ -1,0 +1,54 @@
+﻿@model PitanjaDodajVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+<div class="mx-auto col-lg-5 form mt-lg-5 shadow bg-white rounded p-md-3">
+    <h5>@Model.ProizvodNaziv</h5>
+    <form>
+        <input type="hidden" asp-for="ProizvodId" id="txtProizvodId" />
+        <h3>Pošaljite vaše pitanje</h3>
+        <div class="form-group">
+            <label>Vaše pitanje</label>
+            <textarea rows="5" asp-for="Pitanje" class="form-control" id="txtPitanje">
+                    </textarea>
+            <span asp-validation-for="Pitanje" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-info" onclick="SacuvajPitanje()">Pošaljite</button>
+    </form>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function SacuvajPitanje() {
+        var model = {
+            'model': {
+                'proizvodId': $('#txtProizvodId').val(),
+                'pitanje': $('#txtPitanje').val()
+            }
+        };
+        console.log(model);
+        debugger;
+        $.ajax({
+            url: "@Url.Action("SacuvajPitanje", "Pitanja")",
+            type: 'post',
+            data: model,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                console.log("inside");
+                swal({
+                    backdrop: false,
+                    icon: "success",
+                    type: "success",
+                    text: "Vaše pitanje je zabiljezeno",
+                    title: ""
+                });
+            }
+        });
+    }
+</script>

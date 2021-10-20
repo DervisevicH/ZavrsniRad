@@ -1,0 +1,203 @@
+﻿@model TDSalon.Web.Models.AkcijeDodajVM
+@{
+    ViewData["Title"] = "Dodaj";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string SuccessMsg = (string)TempData["SuccessMessage"];
+}
+<style>
+    
+    .error {
+        display: none;
+        margin-left: 10px;
+    }
+
+    .error_show {        
+        margin-left: 10px;
+        display:inline;
+    }
+</style>
+<div class="container">
+    <h3 class="text-dark text-capitalize">Nova akcija</h3>
+    <hr />
+    @if (SuccessMsg != null)
+    {
+        <div class="row justify-content-center">
+            <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                @SuccessMsg                
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    }
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-2">Info</legend>
+        <div class="row align-items-end">
+            <div class="col-md-6 mt-1">
+                <div class="form-group">
+                    <label for="inputName">Naziv</label>
+                    <input type="text" id="txtNaziv" class="form-control" asp-for="Naziv" required>
+                    <span class="error" id="errNaziv">Polje naziv je obavezno</span>
+                </div>
+            </div>
+            <div class="col-md-6 mt-1">
+                <div class="form-group">
+                    <label for="inputName">Postotak</label>
+                    <input type="text" id="txtPostotak" class="form-control" asp-for="Postotak" required>
+                    <span class="error" id="errPostotak">Polje postotak je obavezno</span>
+                </div>
+            </div>
+            <div class="col-md-6 mt-1">
+                <div class="form-label-group">
+                    <label for="inputName">Datum od</label>
+                    <input type="datetime-local" id="txtOd" class="form-control" asp-for="AkcijaOd">
+                </div>
+            </div>
+            <div class="col-md-6 mt-1">
+                <div class="form-label-group">
+                    <label for="inputName">Datum do</label>
+                    <input type="datetime-local" id="txtDo" class="form-control" asp-for="AkcijaDo">
+                    <span class="error" id="errDatumDo">Datum do ne moze biti manji od datuma od</span>
+                </div>
+            </div>
+            <div class="col-md-3 mt-1">
+                <div class="form-check mb-md-2 mb-sm-2">
+                    <input type="checkbox" id="cbxIsObavijesti" class="form-check-input" asp-for="IsObavijesti">
+                    <label class="form-check-label" for="isObavijesti">Obavijesti kupce</label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-4">Dodaj proizvode</legend>
+        <div class="row mb-2">
+            <div class="col-md-6 mt-1">
+                <div class="input-group">
+                    <select asp-for="ProizvodId" asp-items="Model.ListaProizvoda" id="listaProizvoda" class="form-control"><option></option></select>
+                    <div class="input-group-append">
+                        <button type="button" onclick="DodajProizvod()" class="btn btn-info">Dodaj</button>
+                    </div>
+                </div>
+                <span id="errProizvod" class="error">Odaberite proizvod</span>
+            </div>
+        </div>
+        <div class="container">
+            <table class="table table-bordered" id="listProizvodi">
+                <thead>
+                    <tr>
+                        <th scope="col">Šifra</th>
+                        <th scope="col">Naziv</th>
+                        <th scope="col">Cijena</th>
+                        <th scope="col">Akcijska cijena</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="row justify-content-end mt-3">
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-outline-info btn-block" id="btnSacuvaj" onclick="SacuvajAkciju()" disabled>Sačuvaj</button>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+    var proizvodId;
+    var akcijaId = @Model.AkcijaId;
+    var listaProizvoda=[];
+    function ValidirajFormu() {
+        var isValidna = true;
+        var txtNaziv = $('#txtNaziv');
+        var spanNaziv = $('#errNaziv');
+        if (txtNaziv.val() === "") {
+            isValidna = false;
+            spanNaziv.addClass("error_show text-danger small");
+        }
+        else {
+            spanNaziv.removeClass("error_show text-danger small");
+        }
+
+        var txtPostotak = $('#txtPostotak');
+        var spanPostotak = $('#errPostotak');
+        if (txtPostotak.val() === "") {
+            isValidna = false;
+            spanPostotak.addClass("error_show text-danger small");
+        }
+        else {
+            spanPostotak.removeClass("error_show text-danger small");
+        }
+
+        var datumOd = $('#txtOd');
+        var datumDo = $('#txtDo');
+        var spanDatum = $("#errDatumDo");
+        var d1 = new Date(datumOd.val());
+        var d2 = new Date(datumDo.val());
+        console.log(d2, d1);
+
+        if (d2 < d1) {
+            isValidna = false;
+            spanDatum.addClass("error_show text-danger small");
+        }
+        else {
+            spanDatum.removeClass("error_show text-danger small");
+
+        }
+        return isValidna;
+    }
+
+    $('#listaProizvoda').change(function () {
+         proizvodId = $(this).val();
+    });
+    function SacuvajAkciju() {
+        if (ValidirajFormu()) {
+         var akcijaId = @Model.AkcijaId;
+         var postotak = document.getElementById("txtPostotak").value;
+         var datumOd = $("#txtOd").val();
+         var datumDo = $("#txtDo").val();
+         var naziv = $("#txtNaziv").val();
+         var isObavijesti = $("#cbxIsObavijesti").val();
+            $.ajax({
+                url: "@Url.Action("Sacuvaj", "Akcije")",
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                traditional: "true",
+                data: { postotak: postotak, naziv: naziv, datumOd: datumOd, datumDo: datumDo, isObavijesti: isObavijesti, listaProizvoda: listaProizvoda },
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                },
+                error: function () {
+                }
+            });
+        }
+    }
+     function DodajProizvod() {
+         var postotak = $("#txtPostotak").val();
+         var id = parseInt(proizvodId);
+         if (id) {
+             if (listaProizvoda.indexOf(id) > -1) { }
+             else {
+                 listaProizvoda.push(id);
+             $.ajax({
+                 url: "@Url.Action("GetProizvod", "Proizvodi")",
+                 type: 'GET',
+                 data: { proizvodId: proizvodId, postotak: postotak },
+                 dataType: "json",
+                 success: function (response) {
+                     var rowContent = "<tr><td>" + response.sifra + "</td><td>" + response.naziv + "</td><td>" + response.cijena + "</td>" + "<td>" + response.akcijskaCijena + "</td></tr>";
+                     $("#listProizvodi tbody").append(rowContent);
+                     $("#btnSacuvaj").prop('disabled', false);
+                 }
+             });
+             }
+
+         }
+         else {
+             var span = $("#errProizvod");
+             span.removeClass("error").addClass("error_show");
+         }
+
+    }
+</script>

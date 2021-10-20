@@ -1,0 +1,49 @@
+﻿@model KorpaPartialVM
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+    
+*@
+@{var ukupnoProizvoda = Model.rows.Count();}
+<div class="p-md-2">
+    @if (Model.rows.Count() != 0)
+    {
+
+        @foreach (var item in Model.rows)
+        {
+            <a asp-controller="Proizvodi" asp-action="ProizvodiById" class="text-decoration-none text-dark" asp-route-id="@item.StavkaId">
+                <div class="row" style="margin-bottom:10px; border-bottom:1px solid #e9ecef;padding-bottom:1em;">
+                    <div class="img-fluid float-left">
+                        <img height="70" width="60" src="/uploads/products/@Html.Raw(item.Slika)" />
+                    </div>
+                    <div class="column ml-2">
+                        <p class="mb-0 font-weight-bold" style="color:#343a40;">@item.NazivProizvoda</p>
+                        <p class="mb-0 font-weight-bold" style="color:#343a40;">@item.Kolicina X @item.Cijena.ToString()KM</p>
+                    </div>
+                </div>
+            </a>
+        }
+
+        <div class="row justify-content-between" style="border-bottom:1px solid #e9ecef;">
+            <p class="text-muted pl-3">Ukupno:</p>
+            <p class="text-lg-right font-weight-bold" style="color:#343a40;">@Model.Ukupno.ToString()KM</p>
+        </div>
+        <div class="row justify-content-between mt-2">
+            <a asp-controller="Korpa" asp-action="KorpaIndex" class="text-dark btn btn-link" style="color:#343a40;letter-spacing: .1em;">DETALJI</a>
+            <a class="btn btn-outline-dark " asp-controller="Kupci" style="letter-spacing: .1em;" asp-action="DodajInfo">NARUČI</a>
+        </div>
+
+    }
+    else
+    {
+        <h5>Korpa je prazna</h5>}
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        brojStavki = @Model.rows.Count();
+        console.log(brojStavki);
+
+    });
+
+</script>

@@ -1,0 +1,48 @@
+﻿@model KomentarDodajVM
+<div class="container mt-3">
+    <h5 class="mb-30 padding-top-1x">Ostavi komentar</h5>
+    <form class="row" asp-action="Sacuvaj" asp-controller="Komentari">
+        <input hidden asp-for=@Model.ProizvodId value=@Model.ProizvodId />
+        <input hidden asp-for=@Model.KupacId value=@Model.KupacId />
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="review_name">Ime</label>
+                <input class="form-control form-control-rounded" type="text" value=@Model.Ime disabled>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="review_email">Email</label>
+                <input class="form-control form-control-rounded" type="email" id="review_email" value=@Model.Email disabled>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="review_subject">Naslov</label>
+                <input class="form-control form-control-rounded" type="text" id="txtNaslov" asp-for=@Model.Naslov required="">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="review_rating">Ocjena</label>
+                <select class="form-control form-control-rounded" asp-for=@Model.Ocjena id="txtOcjena">
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="review_text">Komentar </label>
+                <textarea class="form-control form-control-rounded" rows="8" required="" asp-for=@Model.Komentar id="txtKomentar"></textarea>
+            </div>
+        </div>
+        <div class="col-12 text-right">
+            <button class="btn btn-outline-primary" type="submit">Sačuvaj komentar</button>
+        </div>
+    </form>
+
+</div>

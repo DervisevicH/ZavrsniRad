@@ -1,0 +1,128 @@
+﻿@model TDSalon.Web.Helper.ProizvodiUrediVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var poruka = TempData["poruka"];
+
+}
+<form asp-controller="Proizvodi" asp-action="SacuvajIzmjenu" enctype="multipart/form-data">
+    <input hidden value=@Model.ProizvodId asp-for=@Model.ProizvodId />
+    <input hidden value=@Model.KategorijaId asp-for=@Model.KategorijaId />
+    <div class="container">
+        <h3 class="text-dark text-capitalize">Izmjeni proizvod</h3>
+        <h6 class="text-dark text-capitalize">Detalji o proizvodu</h6>
+        <hr />
+        @if (poruka != null)
+        {
+            <div class="row justify-content-center">
+                <div class="alert alert-success alert-dismissible fade show col-md-12">
+                    <strong>@poruka</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for=@Model.Naziv class="control-label mb-10">Naziv</label>
+                            <input class="form-control" type="text" asp-for=@Model.Naziv>
+                            <span asp-validation-for=@Model.Naziv class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for=@Model.Sifra class="control-label mb-10">Šifra</label>
+                            <input class="form-control" type="text" asp-for=@Model.Sifra>
+                            <span asp-validation-for=@Model.Sifra class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for=@Model.Cijena class="control-label mb-10">Cijena</label>
+                            <input class="form-control" type="text" asp-for=@Model.Cijena>
+                            <span asp-validation-for=@Model.Cijena class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for=@Model.Kolicina class="control-label mb-10">Količina</label>
+                            <input class="form-control" type="text" asp-for=@Model.Kolicina>
+                            <span asp-validation-for=@Model.Kolicina class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for=@Model.NapravljenoU class="control-label mb-10">Proizvođač</label>
+                            <input class="form-control" type="text" asp-for=@Model.NapravljenoU>
+                            <span asp-validation-for=@Model.NapravljenoU class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for=@Model.DimenzijeLista class="">Dimenzija</label>
+                            <div class="input-group">
+                                <select id="listaDimenzija" class="form-control" asp-items=@Model.DimenzijeLista asp-for="DimenzijaId"><option value="0"></option></select>
+                            </div>
+                            <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for=@Model.Boja>Boja</label>
+                            <select class="form-control form-control-rounded" asp-for=@Model.Boja>
+                                <option value="Bijela">Bijela</option>
+                                <option value="Crna">Crna</option>
+                                <option value="Crvena">Crvena</option>
+                                <option value="Plava">Plava</option>
+                                <option value="Siva">Siva</option>
+                                <option value="Narandzasta">Narandžasta</option>
+                                <option value="Zelena">Zelena</option>
+                                <option value="Žuta">Žuta</option>
+                            </select>
+                            <span asp-validation-for=@Model.Boja class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for=@Model.PreporucenoZa>Preporučeno za</label>
+                            <select class="form-control form-control-rounded" asp-for=@Model.PreporucenoZa>
+                                <option value="">Sve</option>
+                                <option value="DnevneSobe">Dnevne sobe</option>
+                                <option value="Kuhinje">Kuhinje</option>
+                                <option value="Kupatila">Kupatila</option>
+                                <option value="Terase">Terase</option>
+                                <option value="PoslovniProstor">Poslovni prostor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for=@Model.Opis>Opis</label>
+                        <textarea class="form-control form-control-rounded" type="text" rows="10" asp-for=@Model.Opis>                    
+                </textarea>
+                        <span asp-validation-for=@Model.Opis class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-md-5">
+        <div class="col-lg-12">
+            <button type="submit" class="btn col-md-3 btn-outline-info btn-block float-right mr-md-5">Sačuvaj</button>
+        </div>
+    </div>
+</form>
+
+

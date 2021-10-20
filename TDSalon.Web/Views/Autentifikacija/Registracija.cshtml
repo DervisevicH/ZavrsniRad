@@ -1,0 +1,48 @@
+﻿@model RegistracijaVM
+@{
+    ViewData["Title"] = "Registracija";
+}
+
+<div class="mx-auto col-lg-5 form mt-lg-5 shadow bg-white rounded p-md-3">
+    <h1 class="text-center">Registracija</h1>
+    <hr />
+
+    <form asp-action="Registracija">
+        <div class="form-group">
+            <label for="Username">Korisničko ime</label>
+            <input asp-for="Username" class="form-control">
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Email">Email</label>
+            <input asp-for="Email" class="form-control">
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Password">Lozinka</label>
+            <input asp-for="Password" class="form-control" type="password">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="PasswordRepeat">Ponovite lozinku</label>
+            <input asp-for="PasswordRepeat" class="form-control" type="password">
+            <span asp-validation-for="PasswordRepeat" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Spol">Odaberite spol</label>
+            <select class="form-control" asp-for="Spol">
+                <option selected disabled hidden>Odaberite spol</option>
+                <option value="Žensko">Žensko</option>
+                <option value="Muško">Muško</option>
+            </select>
+            <span asp-validation-for="Spol" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-block btn-lg btn-outline-info">Registruj se</button>
+        </div>
+    </form>
+
+</div>
+
+
+

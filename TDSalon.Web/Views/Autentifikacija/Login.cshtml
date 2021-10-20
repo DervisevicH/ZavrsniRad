@@ -1,0 +1,49 @@
+﻿@model LoginVM
+
+
+@{
+    ViewData["Title"] = "Login";
+    string error_poruka = (string)TempData["error_poruka"];
+}
+
+
+<div class="container mt-md-5 mt-lg-5 align-items-center justify-content-center">
+    <div class="row">
+        <div class="col-md-6 p-md-5 p-sm-2 pb-md-0 pt-0">
+            <h2>Novi korisnik</h2>
+            <p>Zašto vam treba račun? Jednostavno da biste kupovali brže, jednostavnije i eventualno sudjelovali u mnogim pogodnostima koje nude registrovanim članovima.</p>
+            <a asp-action="Registracija" asp-controller="Autentifikacija">Registrujte se</a>
+        </div>
+        <div class="col-md-5 p-md-5 p-sm-2 shadow bg-white rounded">
+            <h2>Već imate račun</h2>
+            <form asp-action="Login" asp-controller="Autentifikacija" class="form">
+                <div class="form-group">
+                    <label for="Username">Korisničko ime</label>
+                    <input asp-for="KorisnickoIme" class="form-control">
+                    <span asp-validation-for="KorisnickoIme" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="Lozinka">Lozinka</label>
+                    <input asp-for="Lozinka" class="form-control">
+                    <span asp-validation-for="Lozinka" class="text-danger"></span>
+                </div>
+                <div class="form-check mb-md-2 mb-sm-2">
+                    <input type="checkbox" class="form-check-input" asp-for="ZapamtiLozinku">
+                    <label class="form-check-label" for="ZapamtiLozinku">Zapamti lozinku</label>
+                </div>
+                <button class="btn btn-outline-info btn-block" type="submit">Login</button>
+            </form>
+            @if (error_poruka != null)
+            {
+                <br />
+                <div class="alert alert-danger">
+                    @error_poruka
+                </div>
+            }
+        </div>
+    </div>
+
+
+</div>
+
+

@@ -1,0 +1,28 @@
+﻿@model NotifikacijeVM
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="container">
+    @if (Model.Rows.Count() != 0)
+    {
+
+        @foreach (var item in Model.Rows)
+        {
+            <a asp-controller="Proizvodi" asp-action="ProizvodiById" class="text-decoration-none text-dark" asp-route-id="@item.ProizvodId">
+                <div class="row" style="margin-bottom:10px; border-bottom:1px solid #e9ecef;padding-bottom:1em;">
+                    <div class="img-fluid float-left">
+                        <img height="70" width="60" src="/uploads/products/@Html.Raw(item.Slika)" />
+                    </div>
+                    <div class="column ml-2">
+                        <p class="mb-0 font-weight-bold" style="color:#343a40;">@item.Proizvod</p>
+                        <p class="mb-0 font-weight-bold" style="color:#343a40;">@item.Cijena</p>
+                        <p class="mb-0 font-weight-bold" style="color:#343a40;">@item.AkcijskaCijena</p>
+                    </div>
+                </div>
+            </a>
+        }
+    }
+    else
+    {
+        <h5>Trenutno nemate notifikacija</h5>}
+</div>

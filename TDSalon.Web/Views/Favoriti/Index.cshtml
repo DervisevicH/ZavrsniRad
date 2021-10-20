@@ -1,0 +1,35 @@
+﻿@model FavoritiVM
+@{
+    Layout = "~/Views/Shared/_KupciLayout.cshtml";
+}
+<div class="container">
+    <div class="row mb-2 mt-2 ml-1">
+        <div class="col-md-7">
+            <h2>Favoriti</h2>
+        </div>
+        <div class="col-md-3 text-right">
+            <a asp-action="DodajFavoriteUKorpu" asp-controller="Korpa">Dodaj sve u korpu</a>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in Model.Rows)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-img-top">
+                        <img src="/uploads/products/@Html.Raw(item.Slika)" class="w-100" />
+                    </div>
+                    <div class="card-img-overlay">
+                        <h3 class="text-right"><span class="badge badge-danger">-30%</span></h3>                        
+                    </div>
+                    <div class="card-body">
+                        <a asp-action="ProizvodDetalji" asp-controller="Proizvodi" asp-route-proizvodId="@item.ProizvodId"><h5 class="card-title">@item.Proizvod</h5></a>
+                        <p class="card-text disabled" style="text-decoration:line-through;">@item.Cijena.ToString()KM</p>
+                        <p class="card-text font-weight-bold" style="color:orangered;" >10.00KM</p>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>

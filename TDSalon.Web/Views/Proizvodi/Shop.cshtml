@@ -1,0 +1,151 @@
+﻿@model ProizvodiVM
+    <input type="hidden" id="kategorijaId" value=@Model.KategorijaId asp-for="KategorijaId" />
+    <div class="row mt-md-2 p-md-2">
+        <div class="col-md-3  m-md-2 shadow-sm p-3 mb-5 bg-white rounded">
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Naziv</label>
+                <div class="input-group ">
+                    <input class="form-control py-2" type="search" id="txtPretraga" asp-for="@Model.Pretraga">
+                    <span class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Boja</label>
+                <select class="form-control form-control-rounded" id="txtBoja" asp-for=@Model.Boja>
+                    <option value="">Sve</option>
+                    <option value="Bijela">Bijela</option>
+                    <option value="Crna">Crna</option>
+                    <option value="Crvena">Crvena</option>
+                    <option value="Plava">Plava</option>
+                    <option value="Siva">Siva</option>
+                    <option value="Narandzasta">Narandžasta</option>
+                    <option value="Zelena">Zelena</option>
+                    <option value="Žuta">Žuta</option>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <label for=@Model.ListaDimenzija class="">Dimenzija</label>
+                <div class="input-group">
+                    <select id="dimenzijaId" class="form-control" asp-items=@Model.ListaDimenzija asp-for="DimenzijaId"><option value=""></option></select>
+                </div>
+                <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Preporučeno za</label>
+                <select id="preporucenoZa" class="custom-select">
+                    <option value="">Sve</option>
+                    <option value="DnevneSobe">Dnevne sobe</option>
+                    <option value="Kuhinje">Kuhinje</option>
+                    <option value="Kupatila">Kupatila</option>
+                    <option value="Terase">Terase</option>
+                    <option value="PoslovniProstor">Poslovni prostor</option>
+                </select>
+            </div>
+            <div class="mb-2 form-group">
+                <label for="exampleInput-5">Cijena</label>
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control" id="txtOd" placeholder="Od">
+                    </div>
+                    <span>-</span>
+                    <div class="col">
+                        <input type="text" class="form-control" id="txtDo" placeholder="Do">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button id="btnFiltriraj" class="btn btn-block btn-outline-dark">Filtriraj</button>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row gutter-1" id="proizvodiDiv">
+                @foreach (var item in Model.Rows)
+                {
+                <div class="col-md-3 mt-2">
+                    <div class="card">
+                        <div class="card-img-top">
+                            <img src="/uploads/products/@Html.Raw(item.SlikaUrl)" class="w-100" />
+                        </div>
+                        @if (item.IsAkcija.HasValue)
+                        {
+                            @if (item.IsAkcija.Value)
+                            {
+                                <div class="card-img-overlay" style="pointer-events: none">
+                                    <h3 class="text-right"><span class="badge badge-danger">-@item.Akcija%</span></h3>
+                                </div>
+                             }
+                        }
+                    <div class="card-body">
+                        <a asp-controller="Proizvodi" asp-action="ProizvodDetalji" asp-route-proizvodId="@item.ProizvodId" style="color:coral;">
+                            <h5 class="card-title">@item.Naziv</h5>
+                        </a>
+                        @if (item.IsAkcija.HasValue)
+                        {
+                            @if (item.IsAkcija.Value)
+                            {
+                                <p class="card-title">
+                                    <span class="disabled" style="text-decoration:line-through;">
+                                        @item.Cijena KM
+                                    </span>
+                                    <span class="ml-md-3 font-weight-bold" style="color: coral;">
+                                        @item.AkcijskaCijena KM
+                                    </span>
+                                </p>
+                               
+                            }
+                            else
+                            {
+                                <p class="card-text" style="font-weight: 700;">@item.Cijena KM</p>
+                            }
+
+                        }
+                        else
+                        {
+                            <p class="card-text" style="font-weight: 700;">@item.Cijena KM</p>
+                        }
+                        <button onclick="DodajUKorpu(@item.ProizvodId)" class="btn text-white btn-block" style="background-color:coral;">Dodaj u korpu</button>
+                    </div>
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div> 
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnFiltriraj").click(function () {
+            pretraga = $("#txtPretraga").val();
+            boja = $("#txtBoja").val();
+            dimenzijaId = $("#dimenzijaId").val();
+            cijenaOd = $("#txtOd").val();
+            cijenaDo = $("#txtDo").val();
+            kategorijaId = $("#kategorijaId").val();
+            preporucenoZa = $("#preporucenoZa").val();
+            $.ajax({
+                url: "@Url.Action("Shop", "Proizvodi")",
+                type: 'GET',
+                data: { pretraga: pretraga, preporucenoZa: preporucenoZa,dimenzijaId:dimenzijaId,boja:boja,cijenaOd:cijenaOd,cijenaDo:cijenaDo,kategorijaId:kategorijaId}                
+            }); 
+        });
+    });
+    function DodajUKorpu(proizvodId) {
+           $.ajax({
+                url: "@Url.Action("DodajUKorpu", "Korpa")",
+                type: 'GET',
+                data: { proizvodId: proizvodId, kolicina: 1},
+                success: function () {
+
+                }
+            });
+    }
+</script>
+
+

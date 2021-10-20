@@ -1,0 +1,99 @@
+﻿@model KupciDodajInfoVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h5 class="text-center mt-md-4 mb-md-2">Molimo Vas unesite ispravne podatke za narudžbu</h5>
+<form asp-action="SacuvajInfo" asp-controller="Kupci" method="post">
+    <div class="container">
+        <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">            
+            <legend class="col-md-2">Lični podaci</legend>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Ime</label>
+                        <input type="text" id="inputName2" class="form-control" asp-for="Ime">
+                        <span class="text-danger" asp-validation-for="Ime"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Prezime</label>
+                        <input type="text" id="inputName2" class="form-control" asp-for="Prezime">
+                        <span class="text-danger" asp-validation-for="Prezime"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Email</label>
+                        <input type="text" id="inputName2" class="form-control" asp-for="Email">
+                        <span class="text-danger" asp-validation-for="Email"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Telefon</label>
+                        <input type="text" id="inputName2" class="form-control" asp-for="Telefon">
+                        <span class="text-danger" asp-validation-for="Telefon"></span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+            <legend class="col-md-2">Adresa</legend>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Kanton</label>
+                        <select asp-for="KantonId" id="listaKantona" asp-items="@Model.listaKantona" class="form-control">
+                            <option value="0">Odaberite kanton..</option>
+                        </select> 
+                        <span class="text-danger" asp-validation-for="KantonId"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-label-group">
+                        <label for="inputName">Grad</label>
+                        <select asp-for="GradId" id="listaGradova" asp-items="@Model.listaGradova" class="form-control">
+                            <option value="0">Odaberite grad..</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="GradId"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-label-group">
+                        <label for="inputName">Adresa</label>
+                        <textarea type="text" rows="3" id="inputName2" class="form-control" asp-for="Adresa">
+                        </textarea>
+                        <span class="text-danger" asp-validation-for="Adresa"></span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="row mt-md-5">
+            <div class="col-lg-12">
+                <button type="submit" class="btn col-md-3 btn-outline-info btn-block float-right">Sljedeća<i class="fal fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $('#listaKantona').change(function () {
+        var selectedValue = $(this).val();
+    $.getJSON({
+        url: '@Url.Action("PopuniGradove", "Gradovi")',
+        data: { kantonId: selectedValue },
+        success: function (result) {
+            var cities = $('#listaGradova');
+            cities.empty();
+            console.log(result);
+            for(var i = 0; i < result.length; i++) {
+                $('#listaGradova').append('<option value=' + result[i].value + '>' + result[i].text + '</option>');
+            }
+        }
+    });
+    });
+</script>

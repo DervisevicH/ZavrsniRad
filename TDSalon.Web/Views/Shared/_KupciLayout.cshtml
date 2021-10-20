@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+@using TDSalon.Data
+@using TDSalon.Web.Helper
+@using TDSalon.Web
+@{
+    int logiraniKorisnik = Context.GetUserId();
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .layout-h2 {
+        font-size: 1.25rem !important;
+        line-height: 1.4em;
+    }
+
+    .layout-nav-item {
+        color: #777777;
+        text-decoration: none;
+        border-right: 0px !important;
+    }
+</style>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.11.1/css/all.css">
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div class="container-fluid mt-md-4">
+        <div class="row gutter-1 gutter-md-2">
+            <div class="col-xl-3 col-lg-4 mb-5 bg-white p-2 p-md-3">
+                <h3 class="text-uppercase text-muted mb-2 layout-h2">Dobrodošli, @*@logiraniKorisnik.KorisnickiNalog.Username!*@</h3>
+                <nav class="list-group  text-uppercase font-weight-bold">
+                    <a class="list-group-item layout-nav-item" asp-action="GetNarudzbeByKorisnik" asp-controller="Narudzbe"> <i class="fas fa-shopping-cart fa-1x pr-2"></i>Narudžbe</a>
+                    <a class="list-group-item layout-nav-item" asp-action="Index" asp-controller="Favoriti"><i class="far fa-star fa-1x pr-2"></i>Favoriti</a>
+                    <a class="list-group-item layout-nav-item" asp-action="PitanjaByKorisnik" asp-controller="Pitanja" asp-route-kupacId=@logiraniKorisnik asp-route-odgovorena=true><i class="fas fa-question fa-1x pr-2"></i>Pitanja</a>
+                    <a class="list-group-item layout-nav-item" asp-action="Profil" asp-controller="Kupci"><i class="fas fa-user fa-1x pr-2"></i>Profil</a>
+                    <a class="list-group-item layout-nav-item" asp-action="ProfilLozinke" asp-controller="Kupci"><i class="fas fa-lock fa-1x pr-2"></i>Lozinka</a>
+                    <a class="list-group-item layout-nav-item" asp-action="ProfilAdrese" asp-controller="Kupci"><i class="fas fa-address-card fa-1x pr-2"></i>Adrese</a>
+                </nav>
+            </div>
+            <div class="col-xl-7" style="box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/js/notification.js"></script>
+</body>
+</html>

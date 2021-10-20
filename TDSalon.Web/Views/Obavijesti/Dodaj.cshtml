@@ -1,0 +1,41 @@
+﻿@model ObavijestiDodajVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="container">
+    <h3 class="text-dark text-capitalize">Nova obavijest</h3>
+    <hr />
+    <form asp-controller="Obavijesti" asp-action="Sacuvaj">
+        <input type="hidden" value=@Model.ObavijestId asp-for=@Model.ObavijestId/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for=@Model.Naslov class="control-label mb-10">Naslov</label>
+                            <input class="form-control" type="text" asp-for=@Model.Naslov>
+                            <span asp-validation-for=@Model.Naslov class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for=@Model.Obavijest class="control-label mb-10">Obavijest</label>
+                            <textarea class="form-control" type="text" asp-for=@Model.Obavijest rows="5"></textarea>
+                            <span asp-validation-for=@Model.Obavijest class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-md-5">
+            <div class="col-lg-12">
+                <button type="submit" class="btn col-md-3 btn-outline-info btn-block float-right">Sačuvaj</button>
+            </div>
+        </div>
+    </form>
+</div>
+

@@ -1,0 +1,90 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model TDSalon.Web.Models.AkcijeIndexVM
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="container">
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-2">Info</legend>
+        <form asp-action="Index" method="get">
+            <div class="row align-items-end">
+                <div class="col-md-3 mt-1">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="inputName">Naziv</label>
+                            <input type="text" class="form-control" name="naziv" asp-for="Naziv" value="@Model.Naziv">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-1">
+                    <div class="form-group">
+                        <label for="inputName">Datum od</label>
+                        <input type="datetime-local" class="form-control" name="datumOd" asp-for="AkcijaOd">
+                    </div>
+                </div>
+                <div class="col-md-4 mt-1">
+                    <div class="form-group">
+                        <label for="inputName">Datum do</label>
+                        <input type="datetime-local" id="txtDo" class="form-control" name="datumDo" asp-for="AkcijaDo">
+                    </div>
+                </div>
+                <div class="col-md-1 mt-1">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-4">Lista Akcija</legend>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <a asp-action="Index" class="text-black-50" asp-route-sortOrder="@ViewData["NazivSortParm"]">Naziv <i class="fa fa-fw fa-sort"></i></a>
+                    </th>
+                    <th scope="col">
+                        <a asp-action="Index" class="text-black-50" asp-route-sortOrder="@ViewData["DatumOdSortParm"]">Datum od <i class="fa fa-fw fa-sort"></i></a>
+                    </th>
+                    <th scope="col">
+                        <a asp-action="Index" class="text-black-50" asp-route-sortOrder="@ViewData["DatumDoSortParm"]">Datum do <i class="fa fa-fw fa-sort"></i></a>
+                    </th>
+                    <th scope="col" class="text-black-50">Status</th>
+                    <th scope="col" class="text-black-50">Akcija</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var akcija in Model.ListaAkcija)
+                {
+                    <tr>
+                        <td>@akcija.Naziv</td>
+                        <td>@akcija.DatumOd</td>
+                        <td>@akcija.DatumDo</td>
+                        <td>
+                            @if (akcija.IsAktivna.Value)
+                            {
+                                <span class="badge badge-success">Aktivna</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Neaktivna</span>
+                            }
+                        </td>
+                        <td>
+                            @if (akcija.IsAktivna.Value)
+                            {
+                                <a asp-action="UrediAkciju" asp-route-akcijaId=@akcija.AkcijaId><i class="fas fa-edit"></i></a>
+                                <a asp-action="DeaktivirajAkciju" asp-route-akcijaId=@akcija.AkcijaId><i class="fa fa-trash"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+</div>
+

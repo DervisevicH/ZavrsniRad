@@ -1,0 +1,131 @@
+﻿@model List<NarudzbeIndexVM>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+    <legend class="col-md-4">Pretraži narudžbe</legend>
+    <form asp-action="Index" method="get">
+        <div class="row mb-4 align-items-end justify-content-start">
+            <div class="col-md-2">
+                <div class="form-label-group">
+                    <label for="inputName">Broj narudžbe</label>
+                    <input type="text" class="form-control" placeholder="Broj narudžbe..." name="brojNarudzbe">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-label-group">
+                    <label for="inputName">Datum od</label>
+                    <input type="datetime-local" name="datumOd" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-label-group">
+                    <label for="inputName">Datum do</label>
+                    <input type="datetime-local" class="form-control" name="datumDo">
+                </div>
+            </div>
+            <div class="col-md-2 align-content-center">
+                <label>Status</label>
+                <select class="custom-select" name="status">
+                    <option selected value="aktivni">Aktivne</option>
+                    <option value="zavrseni">Završene</option>
+                </select>
+            </div>
+            <div class="col-md-2 align-content-center">
+                <label>Status dostave</label>
+                <select class="custom-select" name="statusDostave">
+                    <option value="">Odaberite..</option>
+                    <option value="Čekanje">Čekanje</option>
+                    <option value="Odobreno">Odobreno</option>
+                    <option value="Poslano">Poslano</option>
+                    <option value="Isporučeno">Isporučeno</option>
+                    <option value="Otkazano">Otkazano</option>
+                </select>
+            </div>
+            <div class="col-md-2 align-content-center">
+                <label>Status</label>
+                <select class="custom-select" name="status">
+                    <option selected value="aktivni">Aktivne</option>
+                    <option value="zavrseni">Završene</option>
+                </select>
+            </div>
+            <div class="col-md-2 mt-md-2">
+                <div class="form-label-group">
+                    <label for="inputName">Rok za dostavu</label>
+                    <input type="number" class="form-control" name="rok">
+                </div>
+            </div>
+            <div class="col-md-2 mt-md-2">
+                <div class="form-label-group">
+                    <label for="inputName">Kupac</label>
+                    <input type="text" class="form-control" name="kupac" placeholder="Ime i prezime">
+                </div>
+            </div>
+            <div class="col-md-2 justify-content-end align-items-center mt-md-2 ">
+                <button class="btn btn-secondary" type="submit">
+                    Pretraži
+                </button>
+            </div>
+
+        </div>
+    </form>
+</fieldset>
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th scope="col">#Br.narudžbe</th>
+                <th scope="col">Kupac</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Napomena</th>
+                <th scope="col">Status</th>
+                <th scope="col">Komentar</th>
+                <th scope="col">Rok za dostavu</th>
+                <th scope="col">Ukupno</th>
+                <th scope="col">Opcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>@item.BrojNarudzbe</td>
+                <td>@item.Kupac</td>
+                <td>@item.Datum.ToString("dd/MM/yyyy")</td>
+                <td>@item.Napomena</td>
+                @if (item.StatusNarudzbe == "Čekanje")
+                {
+                    <td><span class="badge badge-secondary">@item.StatusNarudzbe</span></td>
+                }
+                else if (item.StatusNarudzbe == "Odobreno")
+                {
+                    <td><span class="badge badge-info">@item.StatusNarudzbe</span></td>
+                }
+                else if (item.StatusNarudzbe == "Poslano")
+                {
+                    <td><span class="badge badge-primary">@item.StatusNarudzbe</span></td>
+                }
+                else if (item.StatusNarudzbe == "Isporučeno")
+                {
+                    <td><span class="badge badge-success">@item.StatusNarudzbe</span></td>
+                }
+                else if (item.StatusNarudzbe == "Otkazano")
+                {
+                    <td><span class="badge badge-danger">@item.StatusNarudzbe</span></td>
+                }
+                <td>@item.Komentar</td>
+                <td>@item.RokZaDostavu dana</td>
+                <td>@item.Ukupno.ToString("0.00") KM</td>
+                <td>
+                    <a asp-controller="Narudzbe" asp-action="Uredi" asp-route-narudzbaId="@item.NarudzbaId" class="btn btn-outline-success">Procesiraj</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+
+

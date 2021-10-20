@@ -1,0 +1,94 @@
+﻿@model ProizvodiIndexVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var SuccessMsg = TempData["SuccessMessage"];
+}
+
+<div class="container">
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-4">Pretraži proizvode</legend>
+        <form asp-action="IndexAdmin" method="get">
+            <div class="row justify-content-between mb-4 align-items-center">
+                <div class="col-md-4">                    
+                       <select asp-for="KategorijaId" class="custom-select" name="kategorijaId" asp-items="Model.ListaKategorija"><option>Odaberite kategoriju...</option></select>                    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="isAktivan" asp-for="IsAktivan">
+                        <label class="form-check-label" for="autoSizingCheck2">
+                            Prikaži aktivne
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">                    
+                       <input type="text" class="form-control" placeholder="Pretraži proizvode..." name="pretraga" asp-for="Naziv">          
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+    <fieldset class="mb-2 p-md-3" style="border: 1px solid #cecece;">
+        <legend class="col-md-4">Lista Proizvoda</legend>
+        <div class="bg-white">
+            @if (SuccessMsg != null)
+            {
+                <div class="row justify-content-center">
+                    <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                        @SuccessMsg
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            }
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Šifra</th>
+                        <th scope="col">Naziv proizvoda</th>
+                        <th scope="col">Cijena</th>
+                        <th scope="col">Količina</th>
+                        <th scope="col">Kategorija</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Opcije</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaProizvodi)
+                    {
+                        <tr>
+                            <th>@item.Sifra</th>
+                            <td>@item.Naziv</td>
+                            <td>@item.Cijena KM</td>
+                            <td>@item.Kolicina</td>
+                            <td>@item.Kategorija</td>
+                            <td>
+                                @if (item.IsAktivan)
+                                {
+                                    <span class="badge badge-success">Aktivan</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Neaktivan</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Uredi" asp-controller="Proizvodi" asp-route-id="@item.ProizvodId"><i class="fas fa-edit" style="color:blue;" title="Izmijeni"></i></a>
+                                @if (item.IsAktivan)
+                                {
+                                    <a asp-action="DeaktivirajProizvod" asp-route-proizvodId="@item.ProizvodId" class="text-danger" style="cursor:pointer;">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>   
+</div>
