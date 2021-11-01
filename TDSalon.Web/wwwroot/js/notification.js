@@ -10,9 +10,7 @@ var notifikacijeKupac = 0;
 var notifikacijeIdsKupac = [];
 var notifikacijeIdsZaposlenik = [];
     connection.on("novaNotifikacija", (sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId) => {
-        console.log("Hello from nova notifikacija metode", sadrzajId,sadrzaj,tipNotifikacije,notifikacijaId);
         if (tipNotifikacije === "Pitanje") {
-            console.log("Hello from pitanjee if", sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId);
             if (notifikacijeIdsZaposlenik.indexOf(notifikacijaId) === -1) {
                 brojPitanja++;
                 var span = document.getElementById("pitanjaSpan");
@@ -29,7 +27,6 @@ var notifikacijeIdsZaposlenik = [];
             }
         }
         if (tipNotifikacije === "NovaNarudzba") {
-            console.log("Hello from pitanjee if", sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId);
             if (notifikacijeIdsZaposlenik.indexOf(notifikacijaId) === -1) {
                 brojNarudzbi++;
                 var span = document.getElementById("narudzbeSpan");
@@ -63,7 +60,6 @@ var notifikacijeIdsZaposlenik = [];
                 }       
         }
         if (tipNotifikacije === "NarudzbeKupac") {
-            console.log("hello from narduzbe kupac");
             if (notifikacijeIdsKupac.indexOf(notifikacijaId) === -1) {
                 notifikacijeKupac++;
                 var span = document.getElementById("notifikacijeSpan");
@@ -73,7 +69,7 @@ var notifikacijeIdsZaposlenik = [];
 
                 var notifikacija = document.createElement("a");
                 notifikacija.className = "dropdown-item border-bottom";
-                notifikacija.href = "/Narudzbe/NarudzbaById?narudzbaId="+ notifikacijaId;
+                notifikacija.href = "/Narudzbe/NarudzbaById?narudzbaId=" + sadrzajId;
                 notifikacija.innerHTML = sadrzaj;
                 div.appendChild(notifikacija);
                 notifikacijeIdsKupac.push(notifikacijaId)

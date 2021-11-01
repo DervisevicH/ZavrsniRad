@@ -10,7 +10,7 @@
 
         @foreach (var item in Model.rows)
         {
-            <a asp-controller="Proizvodi" asp-action="ProizvodiById" class="text-decoration-none text-dark" asp-route-id="@item.StavkaId">
+            <a asp-controller="Proizvodi" asp-action="ProizvodDetalji" class="text-decoration-none text-dark" asp-route-proizvodId="@item.ProizvodId">
                 <div class="row" style="margin-bottom:10px; border-bottom:1px solid #e9ecef;padding-bottom:1em;">
                     <div class="img-fluid float-left">
                         <img height="70" width="60" src="/uploads/products/@Html.Raw(item.Slika)" />

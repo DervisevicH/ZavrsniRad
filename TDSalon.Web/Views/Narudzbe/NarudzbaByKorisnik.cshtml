@@ -4,6 +4,8 @@
 *@
 @{
     Layout = "~/Views/Shared/_KupciLayout.cshtml";
+    var SuccessMsg = TempData["SuccessMsg"];
+
 }
 <style>
     .fs-18 {
@@ -54,7 +56,19 @@
         <div class="col">
             <h2>Narudžbe</h2>
         </div>
+
     </div>
+    @if (SuccessMsg != null)
+    {
+        <div class="row justify-content-center">
+            <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                @SuccessMsg
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    }
     <div class="row gutter-2">
         @foreach (var item in Model.rows)
         {
@@ -69,7 +83,7 @@
                                 <span class="dropdown">
                                     <button class="btn btn-lg btn-white btn-ico" id="dropdown-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button"><i class="fas fa-ellipsis-v"></i></button>
                                     <span class="dropdown-menu" aria-labelledby="dropdown-1" style="">
-                                        <a class="dropdown-item" asp-action="NarudzbaById" asp-controller="Narudzbe" asp-route-narudzbaId ="@item.NarudzbaId">Detalji</a>
+                                        <a class="dropdown-item" asp-action="NarudzbaById" asp-controller="Narudzbe" asp-route-narudzbaId="@item.NarudzbaId">Detalji</a>
                                     </span>
                                 </span>
                             </div>

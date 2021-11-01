@@ -332,8 +332,9 @@ namespace TDSalon.Web.Controllers
             decimal ukupno = 0;
             foreach (var item in model.rows)
             {
-                ukupno += item.Cijena;
+                ukupno += item.Cijena*item.Kolicina;
             }
+           
             if (ukupno != model.Ukupno)
                 model.Ukupno = ukupno;
             return model;
