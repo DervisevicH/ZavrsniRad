@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Rotativa;
 using Rotativa.AspNetCore;
 using TDSalon.Data;
 using TDSalon.Web.Helper;
+using TDSalon.Web.Hubs;
 using TDSalon.Web.Models;
 
 namespace TDSalon.Web.Controllers
@@ -18,7 +20,10 @@ namespace TDSalon.Web.Controllers
     {
         private readonly TDSalondbContext _db;
         IMapper _mapper;
-        public NarudzbeController(TDSalondbContext db, IMapper mapper) { _db = db; _mapper = mapper; }
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
+        private readonly INotificationManager _notificationManager;
+        public NarudzbeController(TDSalondbContext db, IMapper mapper, IHubContext<NotificationHub> notificationHubContext, INotificationManager notificationManager) { _db = db; _mapper = mapper; _notificationHubContext = notificationHubContext; _notificationManager = notificationManager; }
+
 
         [HttpGet]
         [Authorize(Roles = "Zaposlenik")]
@@ -82,21 +87,53 @@ namespace TDSalon.Web.Controllers
             }).ToList();
             return View("NarudzbaByKorisnik", model);
         }
+        public async Task<ActionResult> NarudzbaById(int narudzbaId)
+        {
+            var narudzbaDb = await _db.Narudzbe.FindAsync(narudzbaId);
+            var narudzbaProizvodiDb = await _db.NarudzbaStavke.Where(x => x.NarudzbaId == narudzbaId).ToListAsync();
+            int korisnikId = HttpContext.GetUserId(); ;
+            Kupci kupac = await _db.Kupci.Include(x => x.Grad).Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
+
+            NarudzbaDodajVM model = new NarudzbaDodajVM()
+            {
+                Napomena = narudzbaDb.Napomena,
+                Ukupno = narudzbaDb.Ukupno.Value,
+                TroskoviDostave = narudzbaDb.TroskoviDostave.Value,
+                RokZaDostavu = narudzbaDb.RokZaDostavu.Value,
+                Kupac = kupac
+            };
+            model.rows = new List<NarudzbaDodajVM.Row>();
+            foreach (var item in narudzbaProizvodiDb)
+            {
+                NarudzbaDodajVM.Row row = new NarudzbaDodajVM.Row();
+                row.Cijena = item.Cijena.Value;
+                row.Dimenzija = GetDimenziju(item.ProizvodId.Value);
+                row.Kolicina = item.Kolicina.Value;
+                row.Slika = await _db.Slike.Where(x => x.ProizvodDetaljiId == item.Proizvod.ProizvodDetaljiId).Select(x => x.SlikaUrl).FirstOrDefaultAsync();
+                row.NazivProizvoda = await _db.ProizvodiDetalji.Where(x => x.ProizvodDetaljiId == item.Proizvod.ProizvodDetaljiId).Select(x => x.Naziv).FirstOrDefaultAsync();
+                model.rows.Add(row);
+            }
+            return View(model);
+        }
         [HttpPost]
         public async Task<ActionResult> SacuvajNarudzbu(string napomena, int brojDana)
         {
             int logiraniKupac = HttpContext.GetUserId();
+            Kupci kupacDb = await _db.Kupci.FindAsync(logiraniKupac);
             var model = await NapraviNarudzbu();
+            var posljednjaNarudzba = await _db.Narudzbe.OrderByDescending(x => x.NarudzbaId).FirstOrDefaultAsync();
+            var broj = Helper.NarudzbaExtension.GenerisiBrojNarudzbe(posljednjaNarudzba);
             Narudzbe novaNarudzba = new Narudzbe()
             {
                 KupacId = logiraniKupac,
-                BrojNarudzbe = 123,
+                BrojNarudzbe = broj,
                 Datum = System.DateTime.Now,
                 Napomena = napomena,
                 Procesirana = false,
                 RokZaDostavu = brojDana,
-                Ukupno=model.Ukupno,                
+                Ukupno=model.Ukupno + model.TroskoviDostave,                
                 TroskoviDostave=model.TroskoviDostave,
+                StatusNarudzbe = "Čekanje",
                 Otkazano = false
             };
             await _db.Narudzbe.AddAsync(novaNarudzba);
@@ -116,6 +153,30 @@ namespace TDSalon.Web.Controllers
             await _db.SaveChangesAsync();
             TempData["SuccessMsg"] = "Vaša narudžba je poslana";
 
+            Notifikacije novaNotifikacija = new Notifikacije();
+            novaNotifikacija.DatumKreiranja = System.DateTime.Now;
+            novaNotifikacija.ZaposlenikId = await _db.Zaposlenici.Select(x => x.ZaposlenikId).FirstOrDefaultAsync();
+            novaNotifikacija.Sadrzaj = $"Dobili ste novu narudžbu od kupca {kupacDb.Ime} {kupacDb.Prezime} ";
+            novaNotifikacija.SadrzajId = novaNarudzba.NarudzbaId;
+            novaNotifikacija.TipNotifikacije = "NovaNarudzba";
+            novaNotifikacija.Procitano = false;
+
+            await _db.Notifikacije.AddAsync(novaNotifikacija);
+            await _db.SaveChangesAsync();
+            List<Notifikacije> listNotifikacija = new List<Notifikacije>() { novaNotifikacija };
+            var connections = _notificationManager.GetUserConnections(novaNotifikacija.ZaposlenikId.ToString());
+            if (connections != null && connections.Count > 0)
+            {
+                foreach (var connectionId in connections)
+                {
+                    foreach (var item in listNotifikacija)
+                    {
+                        await _notificationHubContext.Clients.Client(connectionId).SendAsync("novaNotifikacija", novaNarudzba.NarudzbaId, novaNotifikacija.Sadrzaj, novaNotifikacija.TipNotifikacije, novaNotifikacija.NotifikacijaId);
+                    }
+                }
+            }
+
+            
             return RedirectToAction("GetNarudzbeByKorisnik");
         }
         [HttpGet]
@@ -157,15 +218,50 @@ namespace TDSalon.Web.Controllers
             return View("Detalji", model);
         }
         [HttpPost]
-        public ActionResult ProcesirajNarudzbu(NarudzbaDetaljiVM model)
+        [Authorize(Roles = "Zaposlenik")]
+        public async Task<ActionResult> ProcesirajNarudzbu(NarudzbaDetaljiVM model)
         {
             Narudzbe narudzba = _db.Narudzbe.Find(model.NarudzbaId);
             narudzba.StatusNarudzbe = model.Status;
             narudzba.Komentar = model.Komentar;
-
+            if(narudzba.StatusNarudzbe == "Isporučeno")
+            {
+                narudzba.Procesirana = true;
+            }
             _db.Narudzbe.Update(narudzba);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
+            Notifikacije novaNotifikacija = new Notifikacije();
+            novaNotifikacija.DatumKreiranja = System.DateTime.Now;
+            novaNotifikacija.KupacId = narudzba.KupacId;
+            if(narudzba.StatusNarudzbe =="Čekanje")
+            novaNotifikacija.Sadrzaj = $"Vaša narudžba {narudzba.BrojNarudzbe} je na čekanju ";
+            if (narudzba.StatusNarudzbe == "Odobreno")
+                novaNotifikacija.Sadrzaj = $"Vaša narudžba {narudzba.BrojNarudzbe} je odobrena";
+            if (narudzba.StatusNarudzbe == "Poslano")
+                novaNotifikacija.Sadrzaj = $"Vaša narudžba {narudzba.BrojNarudzbe} je poslana";
+            if (narudzba.StatusNarudzbe == "Isporučeno")
+                novaNotifikacija.Sadrzaj = $"Vaša narudžba {narudzba.BrojNarudzbe} je isporučena";
+            if (narudzba.StatusNarudzbe == "Otkazano")
+                novaNotifikacija.Sadrzaj = $"Vaša narudžba {narudzba.BrojNarudzbe} je otkazana";
+            novaNotifikacija.SadrzajId = narudzba.NarudzbaId;
+            novaNotifikacija.TipNotifikacije = "NarudzbeKupac";
+            novaNotifikacija.Procitano = false;
+            await _db.Notifikacije.AddAsync(novaNotifikacija);
+            await _db.SaveChangesAsync();
+            List<Notifikacije> listNotifikacija = new List<Notifikacije>() { novaNotifikacija };
+            var connections = _notificationManager.GetUserConnections(novaNotifikacija.KupacId.ToString());
+            if (connections != null && connections.Count > 0)
+            {
+                foreach (var connectionId in connections)
+                {
+                    foreach (var item in listNotifikacija)
+                    {
+                        await _notificationHubContext.Clients.Client(connectionId).SendAsync("novaNotifikacija", novaNotifikacija.SadrzajId, novaNotifikacija.Sadrzaj, novaNotifikacija.TipNotifikacije, novaNotifikacija.NotifikacijaId);
+                    }
+                }
+            }
 
+            TempData["SuccessMessage"] = "Uspješno ste sačuvali podatke!";
             return RedirectToAction("Uredi", new { narudzbaId = narudzba.NarudzbaId });
         }
         public string GetDimenziju(int proizvodId)
@@ -186,7 +282,7 @@ namespace TDSalon.Web.Controllers
             int korisnikId = HttpContext.GetUserId(); ;
             Kupci kupac = await _db.Kupci.Include(x => x.Grad).Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
             Korpe korpa = await _db.Korpe.Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
-            var dostava = 0;
+            decimal dostava = 0;
             var kanton = await _db.Kantoni.Where(x => x.KantonId == kupac.Grad.KantonId).SingleOrDefaultAsync();
             if (kanton.KantonId != 3)
             {
@@ -198,7 +294,8 @@ namespace TDSalon.Web.Controllers
                 TroskoviDostave = dostava,
                 Ukupno = korpa.Ukupno.Value,
                 rows = new List<NarudzbaDodajVM.Row>(),
-                Kupac = kupac
+                Kupac = kupac,
+                UkupnoZaPlatiti = korpa.Ukupno.Value + dostava
             };
             List<KorpaProizvodi> listaProizvoda = _db.KorpaProizvodi.Include(x => x.Proizvod).Where(x => x.KorpaId == korpa.KorpaId).ToList();
             foreach (var item in listaProizvoda)

@@ -51,7 +51,10 @@ namespace TDSalon.Web
             services.AddSingleton<IFileProvider>(new PhysicalFileProvider(
             Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(opts => 
+                {
+                    opts.Cookie.IsEssential = true; // make the session cookie Essential
+                });
             services.AddSignalR();
             services.AddSingleton<INotificationManager, NotificationManager>();
         }

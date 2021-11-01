@@ -5,23 +5,47 @@
         .build();
 
 var brojPitanja = 0;
+var brojNarudzbi = 0;
 var notifikacijeKupac = 0;
 var notifikacijeIdsKupac = [];
+var notifikacijeIdsZaposlenik = [];
     connection.on("novaNotifikacija", (sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId) => {
-        console.log("Hello from nova notifikacija metode");
-        if (tipNotifikacije === "PitanjeOdgovor") {
-            brojPitanja++;
-            var span = document.getElementById("pitanjaSpan");
-            span.innerHTML = brojPitanja;
-            span.removeAttribute("hidden");
-            var div = document.getElementById("pitanjaNotifikacije");
+        console.log("Hello from nova notifikacija metode", sadrzajId,sadrzaj,tipNotifikacije,notifikacijaId);
+        if (tipNotifikacije === "Pitanje") {
+            console.log("Hello from pitanjee if", sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId);
+            if (notifikacijeIdsZaposlenik.indexOf(notifikacijaId) === -1) {
+                brojPitanja++;
+                var span = document.getElementById("pitanjaSpan");
+                span.innerHTML = brojPitanja;
+                span.removeAttribute("hidden");
+                var div = document.getElementById("pitanjaNotifikacije");
 
-            var notifikacija = document.createElement("a");
-            notifikacija.className = "dropdown-item border-bottom";
-            notifikacija.href = "/Pitanja/GetPitanje?pitanjeId=" + sadrzajId;
-            notifikacija.innerHTML = sadrzaj;
-            div.appendChild(notifikacija);
+                var notifikacija = document.createElement("a");
+                notifikacija.className = "dropdown-item border-bottom";
+                notifikacija.href = "/Pitanja/Index";
+                notifikacija.innerHTML = sadrzaj;
+                div.appendChild(notifikacija);
+                notifikacijeIdsZaposlenik.push(notifikacijaId);
+            }
         }
+        if (tipNotifikacije === "NovaNarudzba") {
+            console.log("Hello from pitanjee if", sadrzajId, sadrzaj, tipNotifikacije, notifikacijaId);
+            if (notifikacijeIdsZaposlenik.indexOf(notifikacijaId) === -1) {
+                brojNarudzbi++;
+                var span = document.getElementById("narudzbeSpan");
+                span.innerHTML = brojNarudzbi;
+                span.removeAttribute("hidden");
+                var div = document.getElementById("narudzbeNotifikacije");
+
+                var notifikacija = document.createElement("a");
+                notifikacija.className = "dropdown-item border-bottom";
+                notifikacija.href = "/Narudzbe/Uredi?narudzbaId=" + sadrzajId;
+                notifikacija.innerHTML = sadrzaj;
+                div.appendChild(notifikacija);
+                notifikacijeIdsZaposlenik.push(notifikacijaId);
+            }
+        }
+
         if (tipNotifikacije === "Odgovori") {
                 if (notifikacijeIdsKupac.indexOf(notifikacijaId) === -1) {
                     notifikacijeKupac++;
@@ -39,6 +63,7 @@ var notifikacijeIdsKupac = [];
                 }       
         }
         if (tipNotifikacije === "NarudzbeKupac") {
+            console.log("hello from narduzbe kupac");
             if (notifikacijeIdsKupac.indexOf(notifikacijaId) === -1) {
                 notifikacijeKupac++;
                 var span = document.getElementById("notifikacijeSpan");
@@ -48,12 +73,29 @@ var notifikacijeIdsKupac = [];
 
                 var notifikacija = document.createElement("a");
                 notifikacija.className = "dropdown-item border-bottom";
-                notifikacija.href = "/Pitanja/PitanjaByKorisnik";
+                notifikacija.href = "/Narudzbe/NarudzbaById?narudzbaId="+ notifikacijaId;
                 notifikacija.innerHTML = sadrzaj;
                 div.appendChild(notifikacija);
                 notifikacijeIdsKupac.push(notifikacijaId)
             }       
         }
+        if (tipNotifikacije === "Akcija") {
+            if (notifikacijeIdsKupac.indexOf(notifikacijaId) === -1) {
+                notifikacijeKupac++;
+                var span = document.getElementById("notifikacijeSpan");
+                span.innerHTML = notifikacijeKupac;
+                span.removeAttribute("hidden");
+                var div = document.getElementById("notifikacijeDiv");
+
+                var notifikacija = document.createElement("a");
+                notifikacija.className = "dropdown-item border-bottom";
+                notifikacija.href = "/Favoriti/Index";
+                notifikacija.innerHTML = sadrzaj;
+                div.appendChild(notifikacija);
+                notifikacijeIdsKupac.push(notifikacijaId);
+            }
+        }
+
 
     });
 //async function start() {

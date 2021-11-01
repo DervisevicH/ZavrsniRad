@@ -69,7 +69,7 @@
                                 <span class="dropdown">
                                     <button class="btn btn-lg btn-white btn-ico" id="dropdown-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button"><i class="fas fa-ellipsis-v"></i></button>
                                     <span class="dropdown-menu" aria-labelledby="dropdown-1" style="">
-                                        <a class="dropdown-item" href="#!">Detalji</a>
+                                        <a class="dropdown-item" asp-action="NarudzbaById" asp-controller="Narudzbe" asp-route-narudzbaId ="@item.NarudzbaId">Detalji</a>
                                     </span>
                                 </span>
                             </div>
@@ -78,12 +78,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col meta">
-                                <h5 class="order-meta-title">Order #</h5>
-                                <span>12339201</span>
+                                <h5 class="order-meta-title">Broj #</h5>
+                                <span>@item.BrojNarudzbe</span>
                             </div>
                             <div class="col meta">
                                 <h5 class="order-meta-title">Datum</h5>
-                                <span>@item.Datum.ToShortDateString()</span>
+                                <span>@item.Datum.ToString("dd/MM/yyyy")</span>
                             </div>
                             <div class="col meta">
                                 <h5 class="order-meta-title">Ukupno</h5>
@@ -92,6 +92,10 @@
                             <div class="col meta">
                                 <h5 class="order-meta-title">Status</h5>
                                 <span class="text-muted">@item.Status</span>
+                            </div>
+                            <div class="col meta">
+                                <h5 class="order-meta-title">Komentar</h5>
+                                <span class="text-muted">@item.Komentar</span>
                             </div>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ namespace TDSalon.Web.Models
         public DateTime Datum { get; set; }
         public string Kupac { get; set; }
         public string Adresa { get; set; }
-        public int Telefon { get; set; }
+        public string Telefon { get; set; }
         public string Napomena { get; set; }
         public List<Stavke> listaStavki { get; set; }
         public decimal Medusuma { get; set; }

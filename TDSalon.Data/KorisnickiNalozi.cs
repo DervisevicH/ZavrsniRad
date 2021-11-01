@@ -7,7 +7,6 @@ namespace TDSalon.Data
     {
         public KorisnickiNalozi()
         {
-            AutorizacijskiTokeni = new HashSet<AutorizacijskiTokeni>();
             Kupci = new HashSet<Kupci>();
             Zaposlenici = new HashSet<Zaposlenici>();
         }
@@ -18,7 +17,6 @@ namespace TDSalon.Data
         public string PasswordHash { get; set; }
         public bool? IsAktivan { get; set; }
 
-        public virtual ICollection<AutorizacijskiTokeni> AutorizacijskiTokeni { get; set; }
         public virtual ICollection<Kupci> Kupci { get; set; }
         public virtual ICollection<Zaposlenici> Zaposlenici { get; set; }
     }

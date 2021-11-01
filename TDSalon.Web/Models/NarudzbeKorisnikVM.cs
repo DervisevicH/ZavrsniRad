@@ -16,8 +16,8 @@ namespace TDSalon.Web.Models
             public int KorisnikId { get; set; }
             public string Status { get; set; }
             public decimal Ukupno { get; set; }
-            public int BrojNarudzbe { get; set; }            
-
+            public int BrojNarudzbe { get; set; }
+            public string Komentar{ get; set; }
         }
     }
 }

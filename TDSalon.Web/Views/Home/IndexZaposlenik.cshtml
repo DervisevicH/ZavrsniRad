@@ -1,0 +1,146 @@
+﻿@model HomeZaposlenikVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="/css/home.css">
+<div class="container-fluid">
+    <div class="col-md-10 ">
+        <div class="row ">
+            <div class="col-xl-3 col-lg-6">
+                <div class="card l-bg-cherry">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Ukupno narudžbi</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    @Model.UkupnoNarudzbi
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card l-bg-blue-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Ukupno kupaca</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    @Model.UkupnoKupaca
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card l-bg-green-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-ticket-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Ukupno pitanja</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    @Model.UkupnoPitanja
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card l-bg-orange-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Ukupno zaradjeno</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    @Model.UkupnoZaradjeno.ToString("0.00") KM
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-md-4">
+        <div class="col-md-7">
+            <h5>Nove narudžbe</h5>
+            <hr />
+            <table class="table mt-2">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">#Broj narudžbe</th>
+                        <th scope="col">Kupac</th>
+                        <th scope="col">Datum</th>
+                        <th scope="col">Ukupno</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Akcija</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaNarudzbi)
+                    {
+                    <tr>
+                        <th>@item.BrojNarudzbe</th>
+                        <td>@item.Kupac</td>
+                        <td>@item.Datum.ToString("dd-MM-yyyy")</td>
+                        <td>@item.Ukupno.ToString("0.00")KM</td>
+                        <td>
+                            <span class="badge badge-success">@item.Status</span>
+                        </td>
+                        <td>
+                            <a asp-controller="Narudzbe" asp-action="Uredi" asp-route-narudzbaId="@item.NarudzbaId" class="btn btn-outline-success">Detalji</a>
+                        </td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="col-md-5">
+            <h5>Novi kupci</h5>
+            <hr />
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Korisničko ime</th>
+                        <th scope="col">Ime i prezime</th>
+                        <th scope="col">Datum registracije</th>
+                        <th scope="col">Spol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaKupaca)
+                    {
+                    <tr>
+                        <th>@item.KorisnickoIme</th>
+                        <th>@item.ImePrezime</th>
+                        <th>@item.DatumRegistracije.ToString("dd-MM-yyyy")</th>
+                        <td>@item.Spol</td>
+                    </tr>
+                    }
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

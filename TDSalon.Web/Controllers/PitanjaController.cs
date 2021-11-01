@@ -54,6 +54,7 @@ namespace TDSalon.Web.Controllers
             model.ListaProizvoda = _mapper.Map<List<SelectListItem>>(listaProizvoda);
             return View(model);            
         }
+        [Authorize(Roles = "Kupac")]
         public ActionResult DodajPitanje(int proizvodId)
         {
             Proizvodi proizvod = _db.Proizvodi.Include(x => x.ProizvodDetalji).Where(x => x.ProizvodId == proizvodId).SingleOrDefault();
@@ -65,7 +66,8 @@ namespace TDSalon.Web.Controllers
             return View("Dodaj", model);
         }
         [HttpPost]
-        public async Task<ActionResult> SacuvajPitanje(PitanjaDodajVM model)
+        [Authorize(Roles = "Kupac")]
+        public async Task<ActionResult> Sacuvaj(PitanjaDodajVM model)
         {
             if (ModelState.IsValid)
             {
@@ -80,15 +82,18 @@ namespace TDSalon.Web.Controllers
                     Pitanje = model.Pitanje,
                     Procitano = false
                 };
+                
                 await _db.Pitanja.AddAsync(novoPitanje);
                 await _db.SaveChangesAsync();
+                var proizvodDb = await _db.Proizvodi.Include(x=>x.ProizvodDetalji).Where(x=>x.ProizvodId==model.ProizvodId).SingleOrDefaultAsync();
 
                 Notifikacije novaNotifikacija = new Notifikacije();
                 novaNotifikacija.DatumKreiranja = System.DateTime.Now;
                 novaNotifikacija.ZaposlenikId = await _db.Zaposlenici.Select(x => x.ZaposlenikId).FirstOrDefaultAsync();
-                novaNotifikacija.Sadrzaj = $"{username} je postavio novo pitanje";
+                novaNotifikacija.Sadrzaj = $"{username} je postavio novo pitanje za proizvod {proizvodDb.ProizvodDetalji.Naziv}";
                 novaNotifikacija.SadrzajId = novoPitanje.PitanjeId;
-                novaNotifikacija.TipNotifikacije = "PitanjeOdgovor";
+                novaNotifikacija.TipNotifikacije = "Pitanje";
+                novaNotifikacija.Procitano = false;
 
                 await _db.Notifikacije.AddAsync(novaNotifikacija);
                 await _db.SaveChangesAsync();
@@ -99,30 +104,41 @@ namespace TDSalon.Web.Controllers
                     foreach (var connectionId in connections)
                     {
                         foreach (var item in listNotifikacija)
-                        {
-                            
-                            await _notificationHubContext.Clients.Client(connectionId).SendAsync("novaNotifikacija", item.Sadrzaj, item.TipNotifikacije, item.SadrzajId);
+                        {                            
+                            await _notificationHubContext.Clients.Client(connectionId).SendAsync("novaNotifikacija", novoPitanje.PitanjeId, novaNotifikacija.Sadrzaj, novaNotifikacija.TipNotifikacije, novaNotifikacija.NotifikacijaId);
                         }
                     }
                 }
             }
-                
-            
-            return View("Dodaj", model);
+
+            TempData["SuccessMessage"] = "Uspješno ste poslali pitanje!";
+            return RedirectToAction("ProizvodDetalji","Proizvodi", new {proizvodId = model.ProizvodId });
         }
         [HttpGet]
-        public ActionResult PitanjaByKorisnik(int kupacId,bool odgovorena)
+        [Authorize(Roles = "Kupac")]
+        public async Task<ActionResult> PitanjaByKorisnik()
         {
-            var pitanja = _db.Odgovori.Include(x => x.Pitanje).Where(x => x.Pitanje.KupacId == kupacId).ToList();
+            int kupacId = HttpContext.GetUserId();
+            var odgovorenaPitanja = await _db.Odgovori.Include(x => x.Pitanje).Where(x => x.Pitanje.KupacId == kupacId).ToListAsync();
             PitanjaKorisnikVM model = new PitanjaKorisnikVM();
-            model.Rows = pitanja.Select(x => new PitanjaKorisnikVM.Row
+            model.Rows = odgovorenaPitanja.Select(x => new PitanjaKorisnikVM.Row
             {
                 OdgovorId = x.OdgovorId,
                 PitanjeId = x.Pitanje.PitanjeId,
                 Pitanje = x.Pitanje.Pitanje,
                 Odgovor = x.Odgovor
             }).ToList();
-
+            var neOdgovorenaPitanja = await _db.Pitanja.Where(x => x.KupacId == kupacId).ToListAsync();
+            foreach (var item in neOdgovorenaPitanja)
+            {
+                PitanjaKorisnikVM.Row pitanje = new PitanjaKorisnikVM.Row()
+                {
+                    Odgovor = "",
+                    Pitanje = item.Pitanje,
+                    PitanjeId = item.PitanjeId
+                };
+                model.Rows.Add(pitanje);
+            }
             return View("PitanjaByKorisnik",model);
         }
     }

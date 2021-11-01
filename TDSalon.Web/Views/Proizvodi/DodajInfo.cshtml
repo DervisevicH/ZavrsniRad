@@ -67,6 +67,7 @@
                                 <option value="Narandzasta">Narandžasta</option>
                                 <option value="Zelena">Zelena</option>
                                 <option value="Žuta">Žuta</option>
+                                <option value="Smeđa">Smeđa</option>
                             </select>
                             <span asp-validation-for=@Model.Boja class="text-danger"></span>
                         </div>
@@ -75,7 +76,7 @@
                         <div class="form-group">
                             <label for=@Model.PreporucenoZa>Preporučeno za</label>
                             <select class="form-control form-control-rounded" asp-for=@Model.PreporucenoZa>
-                                <option value="">Sve</option>
+                                <option value="Sve">Sve</option>
                                 <option value="DnevneSobe">Dnevne sobe</option>
                                 <option value="Kuhinje">Kuhinje</option>
                                 <option value="Kupatila">Kupatila</option>

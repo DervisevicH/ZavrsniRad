@@ -14,7 +14,7 @@ namespace TDSalon.Web.Helper
             if (posljednjaNarudzba != null)
             {
                 var brojZadnjeNarudzbe = posljednjaNarudzba.BrojNarudzbe.ToString();
-                var posljednjiBroj = brojZadnjeNarudzbe.Substring(7, brojZadnjeNarudzbe.Length);
+                var posljednjiBroj = brojZadnjeNarudzbe.Substring(8);
                 int number;
                 bool isParsable = Int32.TryParse(posljednjiBroj, out number);
 

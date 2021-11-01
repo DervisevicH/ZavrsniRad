@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="~/css/nav.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.11.1/css/all.css">
     <style>
+        #navbarSupportedContent .dropdown-toggle::after {
+            display: none !important;
+        }
+        
         .admin-nav .dropdown-toggle::after {
             display: none !important;
         }
@@ -23,13 +27,16 @@
             color: #fff;
             background: coral !important;
         }
-
+        #navbarSupportedContent ul li.active > a, a[aria-expanded="true"] {
+            background: none !important;
+        }
         .nav-item {
             border-bottom: 1px solid rgba(0,0,0,.1);
             cursor: pointer;
+        }      
+        .nav-buttons .li.active>a{
+            background:none !important;
         }
-
-        
 
         .sidenav {
             height: 100%;
@@ -80,48 +87,12 @@
 </head>
 
 <body>
-    @*<div class="container-fluid w-100">
-            <div class="row gutter-1 gutter-md-2">
-                <div class="col-xl-3 col-lg-4 mb-5 ml-0 h-100 sidenav">
-                    <div class="card">
-                        <img src="#" alt="Alternate Text" height="200" class="card-img-top" />
-                    </div>
-                    <ul class="nav flex-column pt-2 mt-2">
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-home col-md-2"></i> <a class="nav-link disabled col-md-4" href="#">Početna</a>
-                        </li>
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-edit col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Proizvodi</a>
-                        </li>
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-receipt col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Narudžbe</a>
-                        </li>
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-users col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Zaposlenici</a>
-                        </li>
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-percent col-md-2"></i><a class="nav-link disabled col-md-4" href="#">Akcije</a>
-                        </li>
-                        <li class="nav-item row align-items-center">
-                            <i class="fas fa-store col-md-2"></i><a class="nav-link disabled col-md-4" href="#" data-toggle="collapse" data-target="#service">Skladište</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-xl-8 mt-4 pl-2 main">
-                    @RenderBody()
-                </div>
-            </div>
-
-            <hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-            </footer>
-        </div>*@
+   
     <div class="wrapper">
         <!-- Sidebar  -->
         <nav id="sidebar">
-            <div class="sidebar-header text-center">
-                <img src="/uploads/logo.png" alt="Alternate Text" />
+            <div class="sidebar-header">
+                <img src="/uploads/logo.png" alt="Alternate Text" width="200" />
             </div>
 
             <ul class="list-unstyled components">
@@ -131,13 +102,7 @@
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
                             <a asp-action="Index" asp-controller="Narudzbe">Pretraži</a>
-                        </li>
-                        <li>
-                            <a href="#">Otkazane narudžbe</a>
-                        </li>
-                        <li>
-                            <a href="#">Home 3</a>
-                        </li>
+                        </li>                       
                     </ul>
                 </li>
                 <li>
@@ -192,9 +157,7 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#">Magacin</a>
-                </li>
+                
                 <li>
                     <a asp-action="GetAllKupce" asp-controller="Kupci">Kupci</a>
                 </li>
@@ -202,10 +165,10 @@
 
             <ul class="list-unstyled CTAs">
                 <li>
-                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                    <a asp-action="Profil" asp-controller="Zaposlenici" class="download">Uredi Profil</a>
                 </li>
                 <li>
-                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                    <a asp-action="Logout" asp-controller="Autentifikacija">Logout</a>
                 </li>
             </ul>
         </nav>
@@ -225,14 +188,20 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav ml-auto">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#" target="_blank" rel="noopener" aria-label="GitHub">
+                        <ul class="nav navbar-nav ml-auto nav-buttons">                           
+                            <li class="nav-item dropdown nav-buttons" id="">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-lg fa-bell"></i>
-                                    <span class="notification-badge badge badge-danger">1</span>
+                                    <span class="notification-badge badge badge-danger" id="narudzbeSpan" hidden="hidden"></span>
                                 </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-default"
+                                     aria-labelledby="navbarDropdownMenuLink-333" id="narudzbeNotifikacije">
+                                </div>
+
                             </li>
-                            <li class="nav-item dropdown admin-nav" id="">
+
+                            <li class="nav-item dropdown nav-buttons" id="">
                                 <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-lg fa-envelope notification-icon"></i>

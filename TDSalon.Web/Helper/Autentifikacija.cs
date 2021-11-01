@@ -66,5 +66,20 @@ namespace TDSalon.Web.Helper
                 return false;
             
         }
+        public static bool isZaposlenik(this HttpContext context)
+        {
+            var user = context.User.Identity as ClaimsIdentity;
+            Claim claim = user?.FindFirst(ClaimTypes.Role);
+            if (user.IsAuthenticated)
+            {
+                if (claim.Value == "Zaposlenik")
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+
+        }
     }
 }

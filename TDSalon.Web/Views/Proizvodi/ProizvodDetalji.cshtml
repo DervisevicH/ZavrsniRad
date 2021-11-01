@@ -1,4 +1,8 @@
 ﻿@model ProizvodDetaljiVM
+@{ 
+    var SuccessMsg = TempData["SuccessMessage"];
+
+}
 <style>
     .text {
         display: inline-block;
@@ -57,6 +61,26 @@
         <div class="col-md-4 mb-2">
             <input type="hidden" id="proizvodDetaljiId" name="name" asp-for="ProizvodDetaljiId" />
             <input type="hidden" id="proizvodId" name="name" asp-for="ProizvodId" />
+            <div class="row justify-content-center" style="display: none" id="divSuccessMsgFavoriti">
+                <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                    Uspješno ste dodali proizvod u listu omiljenih!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            @if (SuccessMsg != null)
+            {
+                <div class="row justify-content-center">
+                    <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                        @SuccessMsg
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            }
+
             <span class="text-muted mb-5 text">@Model.Kategorija</span>
             <h1 class="proizvod-naziv">@Model.Naziv</h1>
             <div id="cijenaDiv" class="proizvod-cijena">
@@ -163,6 +187,14 @@
                 type: 'GET',
                 data: { proizvodId: proizvodId },
                 success: function () {
+                    var divInfo = document.getElementById('divSuccessMsgFavoriti');
+
+                    if (divInfo.style.display == '' || divInfo.style.display == 'none') {
+                        divInfo.style.display = 'block';
+                    }
+                    else {
+                        divInfo.style.display = 'none';
+                    }
                 }
             });
 

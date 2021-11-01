@@ -1,6 +1,7 @@
 ﻿@model FavoritiVM
 @{
     Layout = "~/Views/Shared/_KupciLayout.cshtml";
+    var SuccessMsg = TempData["SuccessMessage"];
 }
 <div class="container">
     <div class="row mb-2 mt-2 ml-1">
@@ -11,23 +12,67 @@
             <a asp-action="DodajFavoriteUKorpu" asp-controller="Korpa">Dodaj sve u korpu</a>
         </div>
     </div>
+    @if (SuccessMsg != null)
+    {
+        <div class="row justify-content-center">
+            <div class="alert alert-success alert-dismissible fade show col-md-11" role="alert">
+                @SuccessMsg
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    }
+
     <div class="row">
         @foreach (var item in Model.Rows)
         {
-            <div class="col-md-4">
+            <div class="col-md-3 mt-2 mt-md-3">
                 <div class="card">
                     <div class="card-img-top">
                         <img src="/uploads/products/@Html.Raw(item.Slika)" class="w-100" />
                     </div>
-                    <div class="card-img-overlay">
-                        <h3 class="text-right"><span class="badge badge-danger">-30%</span></h3>                        
-                    </div>
+                    @if (item.IsAkcija.HasValue)
+                    {
+                        @if (item.IsAkcija.Value)
+                        {
+                            <div class="card-img-overlay" style="pointer-events: none">
+                                <h3 class="text-right"><span class="badge badge-danger">-@item.Akcija%</span></h3>
+                            </div>
+                        }
+                    }
                     <div class="card-body">
-                        <a asp-action="ProizvodDetalji" asp-controller="Proizvodi" asp-route-proizvodId="@item.ProizvodId"><h5 class="card-title">@item.Proizvod</h5></a>
-                        <p class="card-text disabled" style="text-decoration:line-through;">@item.Cijena.ToString()KM</p>
-                        <p class="card-text font-weight-bold" style="color:orangered;" >10.00KM</p>
+                        <a asp-controller="Proizvodi" asp-action="ProizvodDetalji" asp-route-proizvodId="@item.ProizvodId" style="color:coral;">
+                            <h5 class="card-title">@item.Proizvod</h5>
+                        </a>
+                        @if (item.IsAkcija.HasValue)
+                        {
+                            @if (item.IsAkcija.Value)
+                            {
+                                <p class="card-title">
+                                    <span class="disabled" style="text-decoration:line-through;">
+                                        @item.Cijena KM
+                                    </span>
+                                    <span class="ml-md-3 font-weight-bold" style="color: coral;">
+                                        @item.AkcijskaCijena KM
+                                    </span>
+                                </p>
+
+                            }
+                            else
+                            {
+                                <p class="card-text" style="font-weight: 700;">@item.Cijena KM</p>
+                            }
+
+                        }
+                        else
+                        {
+                            <p class="card-text" style="font-weight: 700;">@item.Cijena KM</p>
+                        }
+                        <a asp-action="IzbrisiIzFavorita" asp-controller="Favoriti" asp-route-favoritId=@item.FavoritProizvodId class="btn btn-outline-danger">Izbrisi iz favorita</a>
                     </div>
                 </div>
+
             </div>
 
         }

@@ -24,6 +24,8 @@ namespace TDSalon.Web.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "Zaposlenik")]
+
         public async Task<ActionResult> GetZaposlenikNotifikacije()
         {
             

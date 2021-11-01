@@ -85,7 +85,7 @@ namespace TDSalon.Web.Controllers
                     var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                     if (zaposlenik != null)
-                        return RedirectToAction("IndexAdmin", "Proizvodi");
+                        return RedirectToAction("IndexZaposlenik", "Home");
                     else
                         return RedirectToAction("Shop", "Proizvodi");
                 }

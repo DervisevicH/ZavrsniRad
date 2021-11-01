@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TDSalon.Data;
+using TDSalon.Web.Helper;
 using TDSalon.Web.Models;
 
 namespace TDSalon.Web.Controllers
@@ -32,29 +34,30 @@ namespace TDSalon.Web.Controllers
             return PartialView("_KomentariPartial", model);
         }
         [HttpGet]
+        [Authorize(Roles = "Kupac")]
 
-        public ActionResult Dodaj(int ProizvodId)
+        public async Task<ActionResult> Dodaj(int ProizvodId)
         {
-            //KorisnickiNalozi logiraniKorisnik = HttpContext.GetLogiraniKorisnik();
-            //if (logiraniKorisnik == null)
-            //{
-            //    TempData["returnUrl"] = HttpContext.Request.Path.ToString();
-            //    return RedirectToAction("Login", "Autentifikacija");
-
-            //}
-            //Kupci kupac = _db.Kupci.Where(x => x.KorisnickiNalogId == logiraniKorisnik.KorisnickiNalogId).Single();
-            KomentarDodajVM model = new KomentarDodajVM()
+            int logiraniKupac = HttpContext.GetUserId();
+            Kupci kupacDb = await _db.Kupci.FindAsync(logiraniKupac);
+            KomentarDodajVM model = new KomentarDodajVM();
+            if (kupacDb != null)
             {
-                ProizvodId = ProizvodId,
-                KupacId = 1,
-                Ime = "amina",
-                Email = "amina@email.com"
-            };
+                model = new KomentarDodajVM()
+                {
+                    ProizvodId = ProizvodId,
+                    KupacId = logiraniKupac,
+                    Ime = kupacDb.Ime,
+                    Email = kupacDb.Prezime
+                };
+            }         
 
             return PartialView("_KomentarDodajPartial", model);
         }
         [HttpPost]
-        public ActionResult Sacuvaj(KomentarDodajVM model)
+        [Authorize(Roles = "Kupac")]
+
+        public async Task<ActionResult> Sacuvaj(KomentarDodajVM model)
         {
             if (ModelState.IsValid)
             {
@@ -67,10 +70,11 @@ namespace TDSalon.Web.Controllers
                     Naslov = model.Naslov,
                     Ocjena = model.Ocjena
                 };
-                _db.Komentari.Add(komentar);
-                _db.SaveChanges();
+                await _db.Komentari.AddAsync(komentar);
+                await _db.SaveChangesAsync();
             }
-            return RedirectToAction("ProizvodiById", "Proizvodi", new { id = model.ProizvodId });
+
+            return RedirectToAction("ProizvodDetalji", "Proizvodi", new { proizvodId = model.ProizvodId });
         }
 
     }

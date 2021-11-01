@@ -9,7 +9,7 @@
 
 <div class="mx-auto col-lg-5 form mt-lg-5 shadow bg-white rounded p-md-3">
     <h5>@Model.ProizvodNaziv</h5>
-    <form>
+    <form asp-action="Sacuvaj" asp-controller="Pitanja">
         <input type="hidden" asp-for="ProizvodId" id="txtProizvodId" />
         <h3>Pošaljite vaše pitanje</h3>
         <div class="form-group">
@@ -18,11 +18,11 @@
                     </textarea>
             <span asp-validation-for="Pitanje" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-info" onclick="SacuvajPitanje()">Pošaljite</button>
+        <button type="submit" class="btn btn-info" >Pošaljite</button>
     </form>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@*<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     function SacuvajPitanje() {
         var model = {
@@ -51,4 +51,4 @@
             }
         });
     }
-</script>
+</script>*@

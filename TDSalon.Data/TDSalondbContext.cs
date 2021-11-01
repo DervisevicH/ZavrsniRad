@@ -17,7 +17,6 @@ namespace TDSalon.Data
 
         public virtual DbSet<Akcije> Akcije { get; set; }
         public virtual DbSet<AkcijeProizvodi> AkcijeProizvodi { get; set; }
-        public virtual DbSet<AutorizacijskiTokeni> AutorizacijskiTokeni { get; set; }
         public virtual DbSet<Dimenzije> Dimenzije { get; set; }
         public virtual DbSet<Dobavljaci> Dobavljaci { get; set; }
         public virtual DbSet<Favoriti> Favoriti { get; set; }
@@ -93,23 +92,6 @@ namespace TDSalon.Data
                     .WithMany(p => p.AkcijeProizvodi)
                     .HasForeignKey(d => d.ProizvodId)
                     .HasConstraintName("FK__AkcijePro__Proiz__17036CC0");
-            });
-
-            modelBuilder.Entity<AutorizacijskiTokeni>(entity =>
-            {
-                entity.HasKey(e => e.TokenId)
-                    .HasName("PK__Autoriza__658FEE8A9E7D4037");
-
-                entity.Property(e => e.TokenId).HasColumnName("TokenID");
-
-                entity.Property(e => e.KorisnickiNalogId).HasColumnName("KorisnickiNalogID");
-
-                entity.Property(e => e.Vrijeme).HasColumnType("datetime");
-
-                entity.HasOne(d => d.KorisnickiNalog)
-                    .WithMany(p => p.AutorizacijskiTokeni)
-                    .HasForeignKey(d => d.KorisnickiNalogId)
-                    .HasConstraintName("FK__Autorizac__Koris__6EF57B66");
             });
 
             modelBuilder.Entity<Dimenzije>(entity =>

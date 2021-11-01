@@ -4,6 +4,7 @@
     bool isLogovan = Context.IsAuthenticated();
     int kupacId = Context.GetUserId();
     bool isKupac = Context.isKupac();
+    bool isZaposlenik = Context.isZaposlenik();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -118,7 +119,7 @@
                             <a class="nav-link text-dark nav-item-text" asp-area="" asp-controller="Proizvodi" asp-action="Shop" asp-route-kategorijaId=4>Tepisi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark nav-item-text text-danger" asp-area="" asp-controller="Proizvodi" asp-action="Shop" asp-route-akcija="true">Akcija%</a>
+                            <a class="nav-link text-dark nav-item-text text-danger" asp-area="" asp-controller="Proizvodi" asp-action="ShopAkcije">Akcija%</a>
                         </li>
                     </ul>
                 </div>
@@ -130,7 +131,7 @@
                         </li>
                     </ul>
                 }
-                else
+                else if (isKupac)
                 {
                     if (isKupac)
                     {
@@ -180,6 +181,14 @@
                     }
 
                 }
+                else if (isZaposlenik)
+                {
+                    <ul class="navbar-nav ml-auto mr-2 mr-md-2 mr-sm-1">
+                        <li class="nav-item">
+                            <a class="btn btn-block text-white" asp-controller="Home" asp-action="IndexZaposlenik" style="background-color:coral;">Zaposlenik Panel</a>
+                        </li>
+                    </ul>
+                }
             </div>
         </nav>
     </header>
@@ -215,7 +224,7 @@
     <script src="~/js/notification.js"></script>
     @RenderSection("Scripts", required: false)
     <script type="text/javascript">
-        
+
     function prikazStavki() {
     $.ajax({
     url: "@Url.Action("IndexPartial", "Korpa")",
@@ -223,11 +232,11 @@
     datatype: 'json',
         success: function (data) {
             $('#korpaDiv').html(data);
-            
+
         }
     });
     }
-       
+
             $('#listaKantona').change(function () {
         var selectedValue = $(this).val();
         });

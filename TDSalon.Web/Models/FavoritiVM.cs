@@ -15,7 +15,7 @@ namespace TDSalon.Web.Models
             public string Proizvod { get; set; }
             public decimal Cijena { get; set; }
             public string Slika{ get; set; }
-            public bool IsAkcija{ get; set; }
+            public bool? IsAkcija{ get; set; }
             public int Akcija{ get; set; }
             public int FavoritProizvodId{ get; set; }
             public decimal AkcijskaCijena { get; set; }

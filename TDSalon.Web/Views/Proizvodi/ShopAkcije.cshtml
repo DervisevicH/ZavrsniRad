@@ -2,71 +2,73 @@
 <input type="hidden" id="kategorijaId" value=@Model.KategorijaId asp-for="KategorijaId" />
 <div class="row mt-md-2 p-md-2">
     <div class="col-md-3  m-md-2 shadow-sm p-3 mb-5 bg-white rounded">
-        <div class="form-group mt-2">
-            <label for="exampleInput-5">Naziv</label>
-            <div class="input-group ">
-                <input class="form-control py-2" type="search" id="txtPretraga" asp-for="@Model.Pretraga">
-                <span class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span>
-            </div>
-        </div>
-        <div class="form-group mt-2">
-            <label for=@Model.ListaKategorija class="">Kategorija</label>
-            <div class="input-group">
-                <select id="kategorija" class="form-control" asp-items=@Model.ListaKategorija asp-for="KategorijaId"><option value=""></option></select>
-            </div>
-            <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
-        </div>
-        <div class="form-group mt-2">
-            <label for="exampleInput-5">Boja</label>
-            <select class="form-control form-control-rounded" id="txtBoja" asp-for=@Model.Boja>
-                <option value="">Sve</option>
-                <option value="Bijela">Bijela</option>
-                <option value="Crna">Crna</option>
-                <option value="Crvena">Crvena</option>
-                <option value="Plava">Plava</option>
-                <option value="Siva">Siva</option>
-                <option value="Narandzasta">Narandžasta</option>
-                <option value="Zelena">Zelena</option>
-                <option value="Žuta">Žuta</option>
-            </select>
-        </div>
-        <div class="form-group mt-2">
-            <label for=@Model.ListaDimenzija class="">Dimenzija</label>
-            <div class="input-group">
-                <select id="dimenzijaId" class="form-control" asp-items=@Model.ListaDimenzija asp-for="DimenzijaId"><option value=""></option></select>
-            </div>
-            <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
-        </div>
-        <div class="form-group mt-2">
-            <label for="exampleInput-5">Preporučeno za</label>
-            <select id="preporucenoZa" class="custom-select">
-                <option value="">Sve</option>
-                <option value="DnevneSobe">Dnevne sobe</option>
-                <option value="Kuhinje">Kuhinje</option>
-                <option value="Kupatila">Kupatila</option>
-                <option value="Terase">Terase</option>
-                <option value="PoslovniProstor">Poslovni prostor</option>
-            </select>
-        </div>
-        <div class="mb-2 form-group">
-            <label for="exampleInput-5">Cijena</label>
-            <div class="row">
-                <div class="col">
-                    <input type="text" class="form-control" id="txtOd" placeholder="Od">
-                </div>
-                <span>-</span>
-                <div class="col">
-                    <input type="text" class="form-control" id="txtDo" placeholder="Do">
+        <form asp-action="ShopAkcije" asp-controller="Proizvodi" method="get">
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Naziv</label>
+                <div class="input-group ">
+                    <input class="form-control py-2" type="search" id="txtPretraga" asp-for="@Model.Pretraga" name="pretraga">
+                    <span class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <button id="btnFiltriraj" class="btn btn-block btn-outline-dark">Filtriraj</button>
-        </div>
+            <div class="form-group mt-2">
+                <label for=@Model.ListaKategorija class="">Kategorija</label>
+                <div class="input-group">
+                    <select id="kategorija" class="form-control" name="kategorijaId" asp-items=@Model.ListaKategorija asp-for="KategorijaId"><option value=""></option></select>
+                </div>
+                <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Boja</label>
+                <select class="form-control form-control-rounded" id="txtBoja" asp-for=@Model.Boja name="boja">
+                    <option value="">Sve</option>
+                    <option value="Bijela">Bijela</option>
+                    <option value="Crna">Crna</option>
+                    <option value="Crvena">Crvena</option>
+                    <option value="Plava">Plava</option>
+                    <option value="Siva">Siva</option>
+                    <option value="Narandzasta">Narandžasta</option>
+                    <option value="Zelena">Zelena</option>
+                    <option value="Žuta">Žuta</option>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <label for=@Model.ListaDimenzija class="">Dimenzija</label>
+                <div class="input-group">
+                    <select id="dimenzijaId" class="form-control" name="dimenzijaId" asp-items=@Model.ListaDimenzija asp-for="DimenzijaId"><option value=""></option></select>
+                </div>
+                <span asp-validation-for=@Model.DimenzijaId class="text-danger small"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label for="exampleInput-5">Preporučeno za</label>
+                <select id="preporucenoZa" class="custom-select" name="preporucenoZa">
+                    <option value="">Sve</option>
+                    <option value="DnevneSobe">Dnevne sobe</option>
+                    <option value="Kuhinje">Kuhinje</option>
+                    <option value="Kupatila">Kupatila</option>
+                    <option value="Terase">Terase</option>
+                    <option value="PoslovniProstor">Poslovni prostor</option>
+                </select>
+            </div>
+            <div class="mb-2 form-group">
+                <label for="exampleInput-5">Cijena</label>
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control" id="txtOd" placeholder="Od" name="cijenaOd">
+                    </div>
+                    <span>-</span>
+                    <div class="col">
+                        <input type="text" class="form-control" id="txtDo" placeholder="Do" name="cijenaDo">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-outline-dark">Filtriraj</button>
+            </div>
+        </form>
     </div>
     <div class="col-md-8">
         <img src="/uploads/akcija.PNG" class="img-fluid mb-3" alt="Responsive image" style="height:300px;width:100%">

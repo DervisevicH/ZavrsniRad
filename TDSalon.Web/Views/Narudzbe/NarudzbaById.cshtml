@@ -27,7 +27,7 @@
 </style>
 <link rel="stylesheet" href="~/css/site.css" />
 <div class="container mt-md-4">
-    <h3 class="text-center  mb-md-2">Vaša narudžba</h3> 
+    <h3 class="text-center  mb-md-2">Vaša narudžba</h3>
     <hr />
     <div class="row justify-content-between mt-md-5">
         <div class="col-md-6 mt-md-4">
@@ -54,14 +54,7 @@
                 </div>
                 <hr />
             }
-            <div class="row">
-                <div class="col">
-                    <p>Ukupno</p>
-                </div>
-                <div class="col">
-                    <p class="text-right">@Model.Ukupno KM</p>
-                </div>
-            </div>
+         
             <div class="row">
                 <div class="col">
                     <p>Troškovi dostave</p>
@@ -75,13 +68,12 @@
                     <p>Ukupno za platiti</p>
                 </div>
                 <div class="col">
-                    <p class="text-right">@Model.UkupnoZaPlatiti KM</p>
+                    <p class="text-right">@Model.Ukupno KM</p>
                 </div>
             </div>
             <hr />
         </div>
         <div class="col-md-4">
-            <form asp-action="SacuvajNarudzbu" asp-controller="Narudzbe" method="post">
                 <h6 class="text-dark text-capitalize">Detalji o isporuci</h6>
                 <hr />
                 <h5>@Model.Kupac.Ime @Model.Kupac.Prezime</h5>
@@ -89,20 +81,18 @@
                 <h5>@Model.Kupac.Adresa</h5>
                 <div class="form-group">
                     <label asp-for=@Model.Napomena class="control-label mb-10">Napomena</label>
-                    <textarea class="form-control" type="text" rows="3" asp-for=@Model.Napomena>
+                    <textarea class="form-control" type="text" rows="3" asp-for=@Model.Napomena disabled>
                 </textarea>
                 </div>
                 <div class="form-group">
                     <label asp-for=@Model.RokZaDostavu class="control-label mb-10">Rok za dostavu</label>
-                    <input class="form-control" type="number" asp-for=@Model.RokZaDostavu />
+                    <input class="form-control" type="number" asp-for=@Model.RokZaDostavu  disabled/>
                 </div>
-
-                <button class="btn btn-outline-dark btn-block" type="submit" style="letter-spacing: .1em;">NARUČI</button>
-            </form>
         </div>
 
     </div>
 </div>
+
 
 
 

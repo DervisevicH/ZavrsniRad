@@ -115,17 +115,21 @@ namespace TDSalon.Web.Controllers
             }
             var proizvodi = model.Rows.Where(x => x.IsAkcija == true).ToList();
             var trenutnaAkcija = await _db.Akcije.Where(x => x.IsAktivna == true).SingleOrDefaultAsync();
-            if (trenutnaAkcija.DatumDo < System.DateTime.Now)
+            if (trenutnaAkcija != null)
             {
-                trenutnaAkcija.IsAktivna = false;
-                var proizvodiNaAkciji = await _db.AkcijeProizvodi.Where(x=>x.AkcijaId== trenutnaAkcija.AkcijaId).ToListAsync();
-                foreach (var proizvod in proizvodiNaAkciji)
+                if (trenutnaAkcija.DatumDo < System.DateTime.Now)
                 {
-                    var proizvodDb = await _db.Proizvodi.Where(x=>x.ProizvodId == proizvod.ProizvodId).SingleOrDefaultAsync();
-                    proizvodDb.IsAkcija = false;
-                    _db.Proizvodi.Update(proizvodDb);
+                    trenutnaAkcija.IsAktivna = false;
+                    var proizvodiNaAkciji = await _db.AkcijeProizvodi.Where(x => x.AkcijaId == trenutnaAkcija.AkcijaId).ToListAsync();
+                    foreach (var proizvod in proizvodiNaAkciji)
+                    {
+                        var proizvodDb = await _db.Proizvodi.Where(x => x.ProizvodId == proizvod.ProizvodId).SingleOrDefaultAsync();
+                        proizvodDb.IsAkcija = false;
+                        _db.Proizvodi.Update(proizvodDb);
+                    }
+                    await _db.SaveChangesAsync();
+                    trenutnaAkcija = null;
                 }
-                await _db.SaveChangesAsync();
             }
             if (trenutnaAkcija != null)
             {
@@ -144,6 +148,7 @@ namespace TDSalon.Web.Controllers
 
             }
             model.ListaDimenzija = ListaZaDropDown(kategorijaId, 0);
+            model.KategorijaId = kategorijaId;
             return View(model);
        
         }
@@ -168,17 +173,20 @@ namespace TDSalon.Web.Controllers
 
             var proizvodi = model.Rows.Where(x => x.IsAkcija == true).ToList();
             var trenutnaAkcija = await _db.Akcije.Where(x => x.IsAktivna == true).SingleOrDefaultAsync();
-            if (trenutnaAkcija.DatumDo < System.DateTime.Now)
-            {
-                trenutnaAkcija.IsAktivna = false;
-                var proizvodiNaAkciji = await _db.AkcijeProizvodi.Where(x => x.AkcijaId == trenutnaAkcija.AkcijaId).ToListAsync();
-                foreach (var proizvod in proizvodiNaAkciji)
+            if (trenutnaAkcija != null) {
+                if (trenutnaAkcija.DatumDo < System.DateTime.Now)
                 {
-                    var proizvodDb = await _db.Proizvodi.Where(x => x.ProizvodId == proizvod.ProizvodId).SingleOrDefaultAsync();
-                    proizvodDb.IsAkcija = false;
-                    _db.Proizvodi.Update(proizvodDb);
+                    trenutnaAkcija.IsAktivna = false;
+                    var proizvodiNaAkciji = await _db.AkcijeProizvodi.Where(x => x.AkcijaId == trenutnaAkcija.AkcijaId).ToListAsync();
+                    foreach (var proizvod in proizvodiNaAkciji)
+                    {
+                        var proizvodDb = await _db.Proizvodi.Where(x => x.ProizvodId == proizvod.ProizvodId).SingleOrDefaultAsync();
+                        proizvodDb.IsAkcija = false;
+                        _db.Proizvodi.Update(proizvodDb);
+                    }
+                    await _db.SaveChangesAsync();
+                    trenutnaAkcija = null;
                 }
-                await _db.SaveChangesAsync();
             }
             if (trenutnaAkcija != null)
             {
@@ -221,6 +229,7 @@ namespace TDSalon.Web.Controllers
             };
             return View(model);
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpGet]
         public async Task<ActionResult> Uredi(int id)
         {
@@ -246,6 +255,7 @@ namespace TDSalon.Web.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpPost]
         public ActionResult Sacuvaj(ProizvodiUrediVM model)
         {
@@ -279,6 +289,7 @@ namespace TDSalon.Web.Controllers
                 return View("Uredi", model);
             
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpGet]
         public async Task<ActionResult> DodajInfo()
         {
@@ -292,6 +303,7 @@ namespace TDSalon.Web.Controllers
             PopuniListe(model);
             return View("DodajInfo", model);
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpPost]
         public async Task<ActionResult> SacuvajInfo(ProizvodiDodajVM model)
         {
@@ -313,6 +325,7 @@ namespace TDSalon.Web.Controllers
                 return View("DodajInfo", model);
             }
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpGet]
         public async Task<ActionResult> DodajCijene(int? kategorijaId)
         {
@@ -334,6 +347,7 @@ namespace TDSalon.Web.Controllers
 
             return View("DodajCijene", model);
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpPost]
         public async Task<ActionResult> SacuvajCijene(ProizvodiCijeneVM model)
         {
@@ -396,7 +410,8 @@ namespace TDSalon.Web.Controllers
                 PopuniDimenzije(model);
                 return View("DodajCijene", model);
             }
-        }        
+        }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpGet]
         public async Task<ActionResult> DodajSlike()
         {
@@ -404,6 +419,7 @@ namespace TDSalon.Web.Controllers
            
             return View("DodajSlike", model);
         }
+        [Authorize(Roles = "Zaposlenik")]
         [HttpPost]
         public async Task<ActionResult> SacuvajProizvod(ProizvodiSlikeVM model)
         {
@@ -426,7 +442,9 @@ namespace TDSalon.Web.Controllers
                 info.KategorijaId = proizvod.KategorijaId;
                 info.DobavljacId = proizvod.DobavljacId;
                 info.PreporucenoZa = proizvod.PreporucenoZa;
-
+                info.IsAktivan = true;
+                info.JedinicaMjereId = proizvod.JedinicaMjereId;
+                
                 _db.ProizvodiDetalji.Add(info);
                 _db.SaveChanges();
 
@@ -441,6 +459,7 @@ namespace TDSalon.Web.Controllers
                     noviProizvod.Sifra = item.Sifra;
                     noviProizvod.Stanje = item.Stanje;
                     noviProizvod.IsAkcija = false;
+                    noviProizvod.Prodato = 0;
                     _db.Proizvodi.Add(noviProizvod);
                     _db.SaveChanges();
                 }
@@ -462,10 +481,11 @@ namespace TDSalon.Web.Controllers
                     await _db.SaveChangesAsync();
                 }
                 HttpContext.Session.Remove("NoviProizvod");
+                TempData["SuccessMessage"] = "Uspješno ste dodali proizvod!";
                 return RedirectToAction("IndexAdmin");
             }
         }
-
+        [Authorize(Roles = "Zaposlenik")]
         [HttpPost]
         public async Task<ActionResult> SacuvajIzmjenu(ProizvodiUrediVM model)
         {

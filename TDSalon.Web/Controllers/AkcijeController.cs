@@ -127,7 +127,7 @@ namespace TDSalon.Web.Controllers
                         {
                             KupacId = item.Favorit.KupacId,
                             Procitano = false,
-                            Sadrzaj = "Proizvod" + item.Proizvod.ProizvodDetalji.Naziv + "je na akciji!",
+                            Sadrzaj = "Proizvod " + item.Proizvod.ProizvodDetalji.Naziv + " je na akciji!",
                             TipNotifikacije = "Akcija",
                             DatumKreiranja = DateTime.Now,
                             SadrzajId = item.ProizvodId
