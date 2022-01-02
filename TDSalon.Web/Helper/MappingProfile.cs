@@ -15,7 +15,8 @@ namespace TDSalon.Web.Helper
     {
         public MappingProfile()
         {
-            CreateMap<ProizvodiUrediVM, Proizvodi>().ReverseMap();
+            CreateMap<ProizvodiUrediVM, Proizvodi>()
+                .ForMember(x => x.Stanje, opt => opt.MapFrom(s=>s.Kolicina)).ReverseMap();
             CreateMap<ProizvodiUrediVM, ProizvodiDetalji>().ReverseMap();
             CreateMap<Akcije, AkcijeVM>()
                 .ForMember(x => x.DatumOd, opt => opt.MapFrom(s => s.DatumOd.Value.ToString("dd/MM/yyyy")))

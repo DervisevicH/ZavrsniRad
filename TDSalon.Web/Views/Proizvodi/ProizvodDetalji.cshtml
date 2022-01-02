@@ -173,8 +173,8 @@
                 url: "@Url.Action("DodajUKorpu", "Korpa")",
                 type: 'GET',
                 data: { proizvodId: proizvodId, kolicina: kolicina},
-                success: function () {
-
+                success: function (data) {
+                    console.log(data);
                 }
             });
 

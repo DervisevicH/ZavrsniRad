@@ -43,8 +43,7 @@ namespace TDSalon.Web
             services.AddAutoMapper(typeof(Startup));
             //services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();
-            var connection = @"Server=.;Database=TDSalondb;Trusted_Connection=True; MultipleActiveResultSets=true";
-            services.AddDbContext<TDSalondbContext>(options => options.UseSqlServer(connection));
+            var connection = @"Server=.;Database=TDSalondb;Trusted_Connection=True; MultipleActiveResultSets=true"; services.AddDbContext<TDSalondbContext>(options => options.UseSqlServer(connection));
             services.Configure<CookieTempDataProviderOptions>(options => {
                 options.Cookie.IsEssential = true;
             });

@@ -2,8 +2,6 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-}
 <style>
 
     .btn-circle {
@@ -27,8 +25,9 @@
 </style>
 <link rel="stylesheet" href="~/css/site.css" />
 <div class="container mt-md-4">
-    <h3 class="text-center  mb-md-2">Vaša narudžba</h3> 
+    <h3 class="text-center  mb-md-2">Vaša narudžba</h3>
     <hr />
+
     <div class="row justify-content-between mt-md-5">
         <div class="col-md-6 mt-md-4">
             @foreach (var item in Model.rows)
@@ -96,8 +95,9 @@
                     <label asp-for=@Model.RokZaDostavu class="control-label mb-10">Rok za dostavu</label>
                     <input class="form-control" type="number" asp-for=@Model.RokZaDostavu />
                 </div>
-
-                <button class="btn btn-outline-dark btn-block" type="submit" style="letter-spacing: .1em;">NARUČI</button>
+              
+                    <button class="btn btn-outline-dark btn-block" type="submit" style="letter-spacing: .1em;">NARUČI</button>
+                
             </form>
         </div>
 

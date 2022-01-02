@@ -83,7 +83,8 @@ namespace TDSalon.Web.Controllers
                 Datum = y.Datum.Value,
                 NarudzbaId = y.NarudzbaId,
                 Status = y.StatusNarudzbe,
-                Ukupno = y.Ukupno.Value
+                Ukupno = y.Ukupno.Value,
+                Komentar=y.Komentar
             }).ToList();
             return View("NarudzbaByKorisnik", model);
         }
@@ -109,7 +110,6 @@ namespace TDSalon.Web.Controllers
                 row.Cijena = item.Cijena.Value;
                 row.Dimenzija = GetDimenziju(item.ProizvodId.Value);
                 row.Kolicina = item.Kolicina.Value;
-                row.Slika = await _db.Slike.Where(x => x.ProizvodDetaljiId == item.Proizvod.ProizvodDetaljiId).Select(x => x.SlikaUrl).FirstOrDefaultAsync();
                 row.NazivProizvoda = await _db.ProizvodiDetalji.Where(x => x.ProizvodDetaljiId == item.Proizvod.ProizvodDetaljiId).Select(x => x.Naziv).FirstOrDefaultAsync();
                 model.rows.Add(row);
             }
@@ -121,6 +121,28 @@ namespace TDSalon.Web.Controllers
             int logiraniKupac = HttpContext.GetUserId();
             Kupci kupacDb = await _db.Kupci.FindAsync(logiraniKupac);
             var model = await NapraviNarudzbu();
+            int korisnikId = HttpContext.GetUserId(); ;
+            Kupci kupac = await _db.Kupci.Include(x => x.Grad).Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
+            Korpe korpa = await _db.Korpe.Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
+            var proizvodi = await _db.KorpaProizvodi.Include(x => x.Proizvod.ProizvodDetalji).Where(x => x.KorpaId == korpa.KorpaId).ToListAsync();
+
+            string poruka = "";
+            bool isStanje = true;
+            foreach (var item in proizvodi)
+            {
+                if (item.Proizvod.Stanje < item.Kolicina)
+                {
+                    string upozorenje = "Proizvoda " + item.Proizvod.ProizvodDetalji.Naziv + " nema dovoljno na stanju. \n";
+                    poruka += upozorenje;
+                    isStanje = false;
+                }
+            }
+            if (!isStanje)
+            {
+                TempData["WarningMessage"] = poruka;
+                TempData["IsNaStanju"] = isStanje;
+                return RedirectToAction("KorpaIndex","Korpa");
+            }
             var posljednjaNarudzba = await _db.Narudzbe.OrderByDescending(x => x.NarudzbaId).FirstOrDefaultAsync();
             var broj = Helper.NarudzbaExtension.GenerisiBrojNarudzbe(posljednjaNarudzba);
             Narudzbe novaNarudzba = new Narudzbe()
@@ -151,6 +173,17 @@ namespace TDSalon.Web.Controllers
                 await _db.NarudzbaStavke.AddAsync(novaStavka);
             }
             await _db.SaveChangesAsync();
+
+            Korpe korpaDb = await _db.Korpe.Where(x => x.KupacId == logiraniKupac).SingleOrDefaultAsync();
+            List<KorpaProizvodi> korpaProizvodis = await _db.KorpaProizvodi.Where(x => x.KorpaId == korpaDb.KorpaId).ToListAsync();
+            _db.RemoveRange(korpaProizvodis);
+            await _db.SaveChangesAsync();
+
+            korpaDb.Ukupno = 0;
+            _db.Korpe.Update(korpaDb);
+            await _db.SaveChangesAsync();
+
+
             TempData["SuccessMsg"] = "Vaša narudžba je poslana";
 
             Notifikacije novaNotifikacija = new Notifikacije();
@@ -282,6 +315,8 @@ namespace TDSalon.Web.Controllers
             int korisnikId = HttpContext.GetUserId(); ;
             Kupci kupac = await _db.Kupci.Include(x => x.Grad).Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
             Korpe korpa = await _db.Korpe.Where(x => x.KupacId == korisnikId).SingleOrDefaultAsync();
+            var proizvodi = await _db.KorpaProizvodi.Include(x => x.Proizvod.ProizvodDetalji).Where(x => x.KorpaId == korpa.KorpaId).ToListAsync();
+            
             decimal dostava = 0;
             var kanton = await _db.Kantoni.Where(x => x.KantonId == kupac.Grad.KantonId).SingleOrDefaultAsync();
             if (kanton.KantonId != 3)

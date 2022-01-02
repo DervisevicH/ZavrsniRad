@@ -32,20 +32,25 @@ namespace TDSalon.Web.Controllers
             if (ModelState.IsValid)
             {
                 KorisnickiNalozi korisnik = _db.KorisnickiNalozi
-                   .SingleOrDefault(x => x.Username == model.KorisnickoIme);
-                string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: model.Lozinka,
-                salt: System.Convert.FromBase64String(korisnik.PasswordSalt),///Encoding.ASCII.GetBytes(dbPasswordSalt),
-               prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+                   .SingleOrDefault(x => x.Username == model.KorisnickoIme);               
 
-                if (korisnik == null || korisnik.PasswordHash != hashedPassword)
+                if (korisnik == null)
+                {
+                    TempData["error_poruka"] = "Korisnik nije registrovan";
+                    return View(model);
+                }
+               string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+               password: model.Lozinka,
+               salt: System.Convert.FromBase64String(korisnik.PasswordSalt),///Encoding.ASCII.GetBytes(dbPasswordSalt),
+               prf: KeyDerivationPrf.HMACSHA1,
+               iterationCount: 10000,
+               numBytesRequested: 256 / 8));
+                if(korisnik.PasswordHash != hashedPassword)
                 {
                     TempData["error_poruka"] = "Pogrešan username ili password";
                     return View(model);
                 }
-
+            
                 //Check the user name and password
                 //Here can be implemented checking logic from the database
                 ClaimsIdentity identity = null;
@@ -103,27 +108,45 @@ namespace TDSalon.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool exist = _db.KorisnickiNalozi.Any(x=>x.Username == model.Username);
+                if (!exist)
+                {
+                    KorisnickiNalozi noviKorisnickiNalog = new KorisnickiNalozi();
+                    noviKorisnickiNalog.Username = model.Username;
+                    byte[] salt = PasswordExtension.GenerateSalt(model.Password);
+                    string hashed = PasswordExtension.GenerateHash(salt, model.Password);
+                    string sal = Convert.ToBase64String(salt);
+                    noviKorisnickiNalog.PasswordSalt = sal;
+                    noviKorisnickiNalog.PasswordHash = hashed;
+                    _db.KorisnickiNalozi.Add(noviKorisnickiNalog);
+                    _db.SaveChanges();
 
-                KorisnickiNalozi noviKorisnickiNalog = new KorisnickiNalozi();
-                noviKorisnickiNalog.Username = model.Username;
-                byte[] salt = PasswordExtension.GenerateSalt(model.Password);
-                string hashed = PasswordExtension.GenerateHash(salt, model.Password);
-                string sal = Convert.ToBase64String(salt);
-                noviKorisnickiNalog.PasswordSalt = sal;
-                noviKorisnickiNalog.PasswordHash = hashed;
-                _db.KorisnickiNalozi.Add(noviKorisnickiNalog);
-                _db.SaveChanges();
 
+                    Kupci noviKupac = new Kupci();
+                    noviKupac.Email = model.Email;
+                    noviKupac.DatumRegistracije = DateTime.Now;
+                    noviKupac.Spol = model.Spol;
+                    noviKupac.KorisnickiNalogId = noviKorisnickiNalog.KorisnickiNalogId;
+                    _db.Kupci.Add(noviKupac);
+                    _db.SaveChanges();
+                    
+                    ClaimsIdentity identity = null;
+                    identity = new ClaimsIdentity(new[] {
+                    new Claim(ClaimTypes.Name, noviKorisnickiNalog.Username),
+                    new Claim(ClaimTypes.Role, "Kupac"),
+                    new Claim("KupacId",noviKupac.KupacId.ToString())
+                }, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
 
-                Kupci noviKupac = new Kupci();
-                noviKupac.Email = model.Email;
-                noviKupac.DatumRegistracije = DateTime.Now;
-                noviKupac.Spol = model.Spol;
-                noviKupac.KorisnickiNalogId = noviKorisnickiNalog.KorisnickiNalogId;
-                _db.Kupci.Add(noviKupac);
-                _db.SaveChanges();
+                    var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                    return RedirectToAction("Shop", "Proizvodi");
+                }
+                else
+                {
+                    ModelState.AddModelError("Username", "Korisničko ime je zauzeto");
+                    return View(model);
 
-                return RedirectToAction("Index", "Home");
+                }
             }
             return View(model);
         }

@@ -22,7 +22,7 @@ namespace TDSalon.Web.Controllers
             try
             {
                 int korisnikId = HttpContext.GetUserId();
-                Korpe korpa = await _db.Korpe.Where(x => x.KupacId == korisnikId).AsNoTracking().SingleOrDefaultAsync();
+                Korpe korpa = await _db.Korpe.Include(x=>x.KorpaProizvodi).Where(x => x.KupacId == korisnikId).AsNoTracking().SingleOrDefaultAsync();
 
                 if (korpa == null)
                 {
@@ -36,14 +36,14 @@ namespace TDSalon.Web.Controllers
                 }
                 Proizvodi proizvod = await _db.Proizvodi.FindAsync(proizvodId);
                 decimal cijena = proizvod.Cijena.Value;
-                var trenutnaAkcija = await _db.Akcije.Where(x => x.IsAktivna == true).SingleOrDefaultAsync();
+                var trenutnaAkcija = await _db.Akcije.Where(x => x.IsAktivna == true).AsNoTracking().SingleOrDefaultAsync();
                 if (proizvod.IsAkcija.HasValue)
                 {
                     if (proizvod.IsAkcija.Value)
                         cijena = await _db.AkcijeProizvodi.Where(x => x.ProizvodId == proizvod.ProizvodId && trenutnaAkcija.AkcijaId == x.AkcijaId).Select(x => x.AkcijskaCijena.Value).SingleOrDefaultAsync();
 
                 }
-                KorpaProizvodi stavka = await _db.KorpaProizvodi.Where(x => x.KorpaId == korpa.KorpaId && x.ProizvodId == proizvodId).SingleOrDefaultAsync();
+                KorpaProizvodi stavka = await _db.KorpaProizvodi.Where(x => x.KorpaId == korpa.KorpaId && x.ProizvodId == proizvodId).AsNoTracking().SingleOrDefaultAsync();
                 if (stavka == null)
                 {
                     stavka = new KorpaProizvodi()
@@ -62,20 +62,32 @@ namespace TDSalon.Web.Controllers
                     stavka.Cijena = cijena;
                     _db.KorpaProizvodi.Update(stavka);
                     await _db.SaveChangesAsync();
+                    _db.Entry(stavka).State = EntityState.Detached;
                 }
                 korpa.Ukupno += kolicina * cijena;
                 korpa.DatumModifikacije = System.DateTime.Now;
                 _db.Korpe.Update(korpa);
                 await _db.SaveChangesAsync();
+               
 
-                return Ok();
+                int broj = korpa.KorpaProizvodi.Count();
+                return Ok(broj);
             }
-            catch (Exception)
+            catch (Exception  ex)
             {
 
                 return NoContent();
             }
 
+        }
+
+        public async Task<ActionResult> GetBrojStavki(int kupacId)
+        {
+            int brojStavki = 0;
+            var korpa = await _db.Korpe.Include(x => x.KorpaProizvodi).Where(x=>x.KupacId == kupacId).SingleOrDefaultAsync();
+            if(korpa!=null)
+            brojStavki = korpa.KorpaProizvodi.Count();
+            return Ok(brojStavki);
         }
         public async Task<ActionResult> KorpaIndex()
         {
@@ -200,17 +212,21 @@ namespace TDSalon.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> PromijeniKolicinu(int stavkaId,decimal kolicina)
         {
-            KorpaProizvodi stavka = await _db.KorpaProizvodi.Include(x=>x.Proizvod).Where(x => x.KorpaProizvodId == stavkaId).SingleOrDefaultAsync();
-            Korpe korpa = await _db.Korpe.FindAsync(stavka.KorpaId);
-            var iznos = stavka.Cijena.Value * stavka.Kolicina;
-            korpa.Ukupno -= iznos;
+            if (stavkaId > 0 && kolicina > 0)
+            {
+                KorpaProizvodi stavka = await _db.KorpaProizvodi.Include(x => x.Proizvod).Where(x => x.KorpaProizvodId == stavkaId).SingleOrDefaultAsync();
+                Korpe korpa = await _db.Korpe.FindAsync(stavka.KorpaId);
+                var iznos = stavka.Cijena.Value * stavka.Kolicina;
+                korpa.Ukupno -= iznos;
                 stavka.Kolicina = kolicina;
                 stavka.Cijena = stavka.Proizvod.Cijena;
-            var noviIznos = stavka.Kolicina * stavka.Cijena;
-            korpa.Ukupno += noviIznos;
-            _db.Korpe.Update(korpa);
-            _db.KorpaProizvodi.Update(stavka);
-            await _db.SaveChangesAsync();
+
+                var noviIznos = stavka.Kolicina * stavka.Cijena;
+                korpa.Ukupno += noviIznos;
+                _db.Korpe.Update(korpa);
+                _db.KorpaProizvodi.Update(stavka);
+                await _db.SaveChangesAsync();
+            }
             return Json(new { redirectToUrl = Url.Action("KorpaIndex", "Korpa") });
         }
         public async Task<ActionResult> DodajFavoriteUKorpu()

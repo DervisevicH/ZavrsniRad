@@ -48,7 +48,7 @@ namespace TDSalon.Web.Controllers
                     ProizvodId = ProizvodId,
                     KupacId = logiraniKupac,
                     Ime = kupacDb.Ime,
-                    Email = kupacDb.Prezime
+                    Email = kupacDb.Email
                 };
             }         
 

@@ -130,8 +130,18 @@
                 url: "@Url.Action("DodajUKorpu", "Korpa")",
                 type: 'GET',
                 data: { proizvodId: proizvodId, kolicina: 1},
-                success: function () {
+                success: function (data) {
+                    var span = document.getElementById("korpaSpan");
 
+                    var brojProizvoda = data;
+                    if (brojProizvoda != 0) {
+                        span.innerHTML = brojProizvoda;
+                        span.removeAttribute("hidden");
+                    }
+                    else {
+                        span.setAttribute("hidden");
+                    }
+                    console.log(brojProizvoda);
                 }
             });
     }

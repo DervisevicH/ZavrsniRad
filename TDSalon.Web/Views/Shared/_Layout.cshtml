@@ -123,6 +123,8 @@
                         </li>
                     </ul>
                 </div>
+                <input type="hidden" id="isLogovanKupac" value="@isKupac.ToString()" />
+                <input type="hidden" id="kupacId" value="@kupacId" />
                 @if (!isLogovan)
                 {
                     <ul class="navbar-nav ml-auto mr-2 mr-md-2 mr-sm-1">
@@ -139,6 +141,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="#" target="_blank" onclick="prikazStavki()" data-toggle="dropdown" id="dropdown-korpa" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-shopping-cart" style="font-size:1.5em;"></i>
+                                    <span class="notification-badge badge badge-danger" id="korpaSpan" hidden="hidden"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right dropdown-default"
                                     aria-labelledby="dropdown-korpa" style="padding: 15px;min-width: 300px;">
@@ -154,10 +157,8 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right dropdown-default"
                                     aria-labelledby="dropdown-notifikacije" style="padding: 15px;min-width: 300px;">
-                                    <li id="notifikacijeDiv">
-                                        <div class="row">
-
-                                        </div>
+                                    <li id="notifikacijeDiv" class="row">
+                                        
                                     </li>
                                 </ul>
                             </li>
@@ -223,7 +224,34 @@
     <script src="~/lib/signalr/signalr.js"></script>
     <script src="~/js/notification.js"></script>
     @RenderSection("Scripts", required: false)
-    <script type="text/javascript">
+<script type="text/javascript">
+    $(document).ready(function () {
+        var isKupacc = $('#isLogovanKupac').val();
+        var id = $('#kupacId').val();
+        if (isKupacc === 'True') {
+            $.ajax({
+                url: "@Url.Action("GetBrojStavki", "Korpa")",
+                type: 'GET',
+                data: { kupacId : id },
+                datatype: 'json',
+                success: function (data) {
+                    var span = document.getElementById("korpaSpan");
+
+                    var brojProizvoda = data;
+                    if (brojProizvoda != 0) {
+                        span.innerHTML = brojProizvoda;
+                        span.removeAttribute("hidden");
+                    }
+                    else {
+                        span.setAttribute("hidden");
+                    }
+                    console.log(brojProizvoda);
+                }
+    });
+
+        }
+    });
+
 
     function prikazStavki() {
     $.ajax({
@@ -232,7 +260,8 @@
     datatype: 'json',
         success: function (data) {
             $('#korpaDiv').html(data);
-
+            var brojProizvoda = $('#brojStavki').val;
+            console.log(brojProizvoda);
         }
     });
     }
@@ -241,6 +270,6 @@
         var selectedValue = $(this).val();
         });
 
-    </script>
+</script>
 </body>
 </html>
